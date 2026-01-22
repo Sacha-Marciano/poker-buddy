@@ -1,19 +1,13 @@
-import { NextRequest } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Player } from '@/models';
-import { errorResponse, successResponse, handleError } from '@/lib/api-helpers';
-import { z } from 'zod';
+import { successResponse, handleError } from '@/lib/api-helpers';
 
-const createPlayerSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50, 'Name too long').trim(),
-});
-
-// GET /api/players - Get all active players with stats
+// GET /api/leaderboard - Get all-time leaderboard
 export async function GET() {
   try {
     await connectDB();
 
-    const players = await Player.aggregate([
+    const leaderboard = await Player.aggregate([
       { $match: { isDeleted: false } },
       {
         $lookup: {
@@ -41,8 +35,8 @@ export async function GET() {
       },
       {
         $project: {
-          _id: 1,
-          name: 1,
+          playerId: '$_id',
+          playerName: '$name',
           totalGamesPlayed: { $size: '$participations' },
           totalBuyIns: { $sum: '$buyIns.amount' },
           totalCashouts: { $sum: '$cashouts.amount' },
@@ -51,35 +45,23 @@ export async function GET() {
           },
         },
       },
-      { $sort: { name: 1 } },
+      {
+        $addFields: {
+          averageProfitPerSession: {
+            $cond: {
+              if: { $gt: ['$totalGamesPlayed', 0] },
+              then: {
+                $round: [{ $divide: ['$totalProfitLoss', '$totalGamesPlayed'] }, 0],
+              },
+              else: null,
+            },
+          },
+        },
+      },
+      { $sort: { totalProfitLoss: -1 } },
     ]);
 
-    return successResponse(players);
-  } catch (error) {
-    return handleError(error);
-  }
-}
-
-// POST /api/players - Create new player
-export async function POST(request: NextRequest) {
-  try {
-    await connectDB();
-
-    const body = await request.json();
-    const { name } = createPlayerSchema.parse(body);
-
-    // Check if name already exists (case-insensitive)
-    const existing = await Player.findOne({
-      name: { $regex: new RegExp(`^${name}$`, 'i') },
-    });
-
-    if (existing) {
-      return errorResponse('Player name already exists', 400);
-    }
-
-    const player = await Player.create({ name });
-
-    return successResponse(player, 201);
+    return successResponse(leaderboard);
   } catch (error) {
     return handleError(error);
   }

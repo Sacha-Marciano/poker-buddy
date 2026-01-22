@@ -14,7 +14,7 @@ export function handleError(error: unknown) {
   console.error('API Error:', error);
 
   if (error instanceof ZodError) {
-    const messages = error.errors.map((e) => e.message).join(', ');
+    const messages = error.issues.map((e) => e.message).join(', ');
     return errorResponse(`Validation error: ${messages}`, 400);
   }
 
