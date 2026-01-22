@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Modal, Button, Input } from '@/components/ui';
+import { Modal, Button, Input, Skeleton } from '@/components/ui';
 import { usePlayers } from '@/hooks/useApi';
 import { playerApi, gameApi } from '@/lib/api';
-import { LoadingSpinner } from '@/components/ui';
 
 interface AddParticipantModalProps {
   isOpen: boolean;
@@ -146,8 +145,13 @@ export function AddParticipantModal({
       ) : (
         <div className="space-y-3">
           {loadingPlayers ? (
-            <div className="flex justify-center py-8">
-              <LoadingSpinner size="lg" />
+            <div className="space-y-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                  <Skeleton className="h-5 w-32 mb-2" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              ))}
             </div>
           ) : availablePlayers && availablePlayers.length > 0 ? (
             <>

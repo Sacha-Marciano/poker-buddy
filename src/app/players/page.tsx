@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { PageHeader, Button, Card, EmptyState, LoadingSpinner, Input, Modal } from '@/components/ui';
+import { PageHeader, Button, Card, EmptyState, Input, Modal, Skeleton } from '@/components/ui';
 import { usePlayers } from '@/hooks/useApi';
 import { playerApi } from '@/lib/api';
 import { formatCurrency, formatProfitLoss, getProfitLossColor } from '@/lib/utils';
@@ -38,8 +38,31 @@ export default function PlayersPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="min-h-screen pb-20">
+        <PageHeader
+          title="Players"
+          showBack
+          action={
+            <Button size="sm" disabled>
+              Add Player
+            </Button>
+          }
+        />
+        <main className="p-4">
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Card key={i}>
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <Skeleton className="h-6 w-32 mb-2" />
+                    <Skeleton className="h-4 w-48" />
+                  </div>
+                  <Skeleton className="h-5 w-20" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </main>
       </div>
     );
   }

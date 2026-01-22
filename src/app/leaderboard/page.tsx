@@ -1,6 +1,6 @@
 'use client';
 
-import { PageHeader, Card, EmptyState, LoadingSpinner, Badge } from '@/components/ui';
+import { PageHeader, Card, EmptyState, Badge, Skeleton } from '@/components/ui';
 import { useLeaderboard } from '@/hooks/useApi';
 import { formatCurrency, formatProfitLoss, getProfitLossColor } from '@/lib/utils';
 
@@ -9,8 +9,27 @@ export default function LeaderboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="min-h-screen pb-20">
+        <PageHeader title="Leaderboard" showBack />
+        <main className="p-4">
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} variant="outlined">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="w-12 h-12 rounded-full" />
+                  <div className="flex-1">
+                    <Skeleton className="h-5 w-32 mb-2" />
+                    <Skeleton className="h-4 w-40" />
+                  </div>
+                  <div className="text-right">
+                    <Skeleton className="h-6 w-20 mb-1" />
+                    <Skeleton className="h-3 w-16" />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </main>
       </div>
     );
   }

@@ -8,3 +8,4 @@ export * from './FAB';
 export * from './LoadingSpinner';
 export * from './EmptyState';
 export * from './PageHeader';
+export * from './Skeleton';

@@ -22,21 +22,30 @@ export function ParticipantCard({
   const [customAmount, setCustomAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [optimisticBuyIns, setOptimisticBuyIns] = useState(0);
+  const [loadingButton, setLoadingButton] = useState<number | null>(null);
 
   const handleQuickBuyIn = async (amount: number) => {
     setError('');
-    setIsSubmitting(true);
+    setLoadingButton(amount);
+
+    // Optimistically update the UI
+    setOptimisticBuyIns(prev => prev + amount);
 
     const result = await buyInApi.create({
       gameParticipantId: participant._id,
       amount,
     });
 
-    setIsSubmitting(false);
+    setLoadingButton(null);
 
     if (result.success) {
+      // Clear optimistic state and refresh from server
+      setOptimisticBuyIns(0);
       onBuyInAdded();
     } else {
+      // Revert optimistic update on error
+      setOptimisticBuyIns(prev => prev - amount);
       setError(result.error);
     }
   };
@@ -52,6 +61,9 @@ export function ParticipantCard({
 
     setIsSubmitting(true);
 
+    // Optimistically update the UI
+    setOptimisticBuyIns(prev => prev + amount);
+
     const result = await buyInApi.create({
       gameParticipantId: participant._id,
       amount,
@@ -61,11 +73,18 @@ export function ParticipantCard({
 
     if (result.success) {
       setCustomAmount('');
+      // Clear optimistic state and refresh from server
+      setOptimisticBuyIns(0);
       onBuyInAdded();
     } else {
+      // Revert optimistic update on error
+      setOptimisticBuyIns(prev => prev - amount);
       setError(result.error);
     }
   };
+
+  const displayTotal = participant.totalBuyIns + optimisticBuyIns;
+  const displayCount = participant.buyInCount + (optimisticBuyIns > 0 ? 1 : 0);
 
   return (
     <Card variant="outlined" className="relative">
@@ -77,13 +96,18 @@ export function ParticipantCard({
               {participant.playerName}
             </h3>
             <div className="flex items-center gap-3 mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              <span>
-                {participant.buyInCount} buy-in{participant.buyInCount !== 1 ? 's' : ''}
+              <span className={optimisticBuyIns > 0 ? 'opacity-60' : ''}>
+                {displayCount} buy-in{displayCount !== 1 ? 's' : ''}
               </span>
               <span>•</span>
-              <span className="font-semibold">
-                {formatCurrency(participant.totalBuyIns)}
+              <span className={`font-semibold ${optimisticBuyIns > 0 ? 'opacity-60' : ''}`}>
+                {formatCurrency(displayTotal)}
               </span>
+              {optimisticBuyIns > 0 && (
+                <span className="text-blue-600 dark:text-blue-400 text-xs">
+                  Saving...
+                </span>
+              )}
             </div>
           </div>
           <div className="text-right">
@@ -108,14 +132,23 @@ export function ParticipantCard({
                 <button
                   key={amount}
                   onClick={() => handleQuickBuyIn(amount)}
-                  disabled={isSubmitting}
-                  className={`h-12 rounded-lg font-bold text-base transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                  disabled={loadingButton !== null}
+                  className={`h-12 rounded-lg font-bold text-base transition-all disabled:cursor-not-allowed relative ${
                     amount === 50
                       ? 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
                       : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                  }`}
+                  } ${loadingButton === amount ? 'opacity-60' : ''}`}
                 >
-                  {amount}
+                  {loadingButton === amount ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </span>
+                  ) : (
+                    amount
+                  )}
                 </button>
               ))}
             </div>

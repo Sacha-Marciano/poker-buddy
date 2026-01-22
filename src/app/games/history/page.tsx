@@ -1,6 +1,6 @@
 'use client';
 
-import { PageHeader, Card, CardTitle, EmptyState, LoadingSpinner, Badge } from '@/components/ui';
+import { PageHeader, Card, CardTitle, EmptyState, Badge, Skeleton } from '@/components/ui';
 import { GameCard } from '@/components/game/GameCard';
 import { useCompletedGames } from '@/hooks/useApi';
 
@@ -9,8 +9,23 @@ export default function GameHistoryPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="min-h-screen pb-20">
+        <PageHeader title="Game History" showBack />
+        <main className="p-4">
+          <Card variant="outlined" padding="none">
+            <div className="p-4 border-b border-zinc-200 dark:border-zinc-700">
+              <CardTitle>Completed Games</CardTitle>
+            </div>
+            <div className="p-4 space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i}>
+                  <Skeleton className="h-5 w-32 mb-2" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              ))}
+            </div>
+          </Card>
+        </main>
       </div>
     );
   }

@@ -2,11 +2,12 @@
 
 import { use } from 'react';
 import { format } from 'date-fns';
-import { PageHeader, Card, CardTitle, LoadingSpinner, Badge, EmptyState, Button } from '@/components/ui';
+import { PageHeader, Card, CardTitle, Badge, EmptyState, Button, Skeleton } from '@/components/ui';
 import { useGame } from '@/hooks/useGame';
 import { formatCurrency, formatProfitLoss, getProfitLossColor } from '@/lib/utils';
 import { AddParticipantModal } from '@/components/game/AddParticipantModal';
 import { ParticipantCard } from '@/components/game/ParticipantCard';
+import { ParticipantCardSkeleton } from '@/components/game/ParticipantCardSkeleton';
 import { useState } from 'react';
 
 export default function GameDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -24,8 +25,41 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="lg" />
+      <div className="min-h-screen pb-20">
+        <PageHeader
+          title="Loading..."
+          showBack
+        />
+        <main className="p-4 space-y-4">
+          {/* Status Skeleton */}
+          <Card>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-6 w-20" />
+            </div>
+          </Card>
+
+          {/* Players Header Skeleton */}
+          <div className="flex items-center justify-between mb-3 px-1">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-9 w-24" />
+          </div>
+
+          {/* Participant Skeletons */}
+          <div className="space-y-3">
+            <ParticipantCardSkeleton />
+            <ParticipantCardSkeleton />
+            <ParticipantCardSkeleton />
+          </div>
+
+          {/* Total Buy-ins Skeleton */}
+          <Card>
+            <Skeleton className="h-5 w-32 mb-3" />
+            <div className="text-center">
+              <Skeleton className="h-9 w-40 mx-auto" />
+            </div>
+          </Card>
+        </main>
       </div>
     );
   }

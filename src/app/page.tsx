@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { PageHeader, Button, Input, Card, CardTitle, EmptyState, LoadingSpinner } from '@/components/ui';
+import { PageHeader, Button, Input, Card, CardTitle, EmptyState, Skeleton } from '@/components/ui';
 import { GameCard } from '@/components/game/GameCard';
 import { gameApi } from '@/lib/api';
 import { createGameSchema } from '@/schemas/game';
@@ -124,8 +124,9 @@ export default function CreateGamePage() {
             </div>
 
             {gamesLoading && (
-              <div className="flex items-center justify-center p-8">
-                <LoadingSpinner size="lg" />
+              <div className="p-4 space-y-3">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
               </div>
             )}
 
