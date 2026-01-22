@@ -2,13 +2,25 @@
 
 import { use } from 'react';
 import { format } from 'date-fns';
-import { PageHeader, Card, CardTitle, LoadingSpinner, Badge, EmptyState } from '@/components/ui';
+import { PageHeader, Card, CardTitle, LoadingSpinner, Badge, EmptyState, Button } from '@/components/ui';
 import { useGame } from '@/hooks/useGame';
-import { formatCurrency, formatProfitLoss, getProfitLossColor, getBalanceStatusColor } from '@/lib/utils';
+import { formatCurrency, formatProfitLoss, getProfitLossColor } from '@/lib/utils';
+import { AddParticipantModal } from '@/components/game/AddParticipantModal';
+import { ParticipantCard } from '@/components/game/ParticipantCard';
+import { useState } from 'react';
 
 export default function GameDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { game, isLoading, error } = useGame(id);
+  const { game, isLoading, error, loadGame } = useGame(id);
+  const [showAddParticipantModal, setShowAddParticipantModal] = useState(false);
+
+  const handleParticipantAdded = () => {
+    loadGame(id);
+  };
+
+  const handleBuyInAdded = () => {
+    loadGame(id);
+  };
 
   if (isLoading) {
     return (
@@ -29,6 +41,8 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
     );
   }
 
+  const isGameActive = game.status === 'IN_PROGRESS';
+
   return (
     <div className="min-h-screen pb-20">
       <PageHeader
@@ -40,88 +54,105 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
       <main className="p-4 space-y-4">
         {/* Game Status */}
         <Card>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Status</h3>
-            <Badge variant={game.status === 'IN_PROGRESS' ? 'success' : 'default'}>
-              {game.status === 'IN_PROGRESS' ? 'Active' : 'Completed'}
+            <Badge variant={isGameActive ? 'success' : 'default'}>
+              {isGameActive ? 'Active' : 'Completed'}
             </Badge>
           </div>
         </Card>
 
-        {/* Balance Summary */}
-        <Card>
-          <CardTitle className="mb-4">Balance</CardTitle>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-zinc-600 dark:text-zinc-400">Total Buy-ins</span>
-              <span className="font-semibold">{formatCurrency(game.totalBuyIns)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-600 dark:text-zinc-400">Total Cashouts</span>
-              <span className="font-semibold">{formatCurrency(game.totalCashouts)}</span>
-            </div>
-            <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
-            <div className="flex justify-between items-center">
-              <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Difference</span>
-              <div className="flex items-center gap-2">
-                <span className={`font-semibold ${getProfitLossColor(game.balanceDiscrepancy)}`}>
-                  {formatProfitLoss(game.balanceDiscrepancy)}
-                </span>
-                <Badge
-                  variant={
-                    game.balanceStatus === 'GREEN'
-                      ? 'success'
-                      : game.balanceStatus === 'YELLOW'
-                      ? 'warning'
-                      : 'danger'
-                  }
-                  size="sm"
-                >
-                  {game.balanceStatus}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </Card>
-
         {/* Participants */}
-        <Card>
-          <CardTitle className="mb-4">
-            Participants ({game.participants.length})
-          </CardTitle>
+        <div>
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+              Players ({game.participants.length})
+            </h2>
+            {isGameActive && (
+              <Button
+                size="sm"
+                onClick={() => setShowAddParticipantModal(true)}
+              >
+                + Add Player
+              </Button>
+            )}
+          </div>
+
           {game.participants.length === 0 ? (
-            <EmptyState
-              title="No players yet"
-              description="Add players to start tracking buy-ins"
-            />
+            <Card variant="outlined">
+              <EmptyState
+                title="No players yet"
+                description="Add players to start tracking buy-ins"
+                action={
+                  isGameActive ? (
+                    <Button onClick={() => setShowAddParticipantModal(true)}>
+                      Add First Player
+                    </Button>
+                  ) : undefined
+                }
+              />
+            </Card>
           ) : (
             <div className="space-y-3">
-              {game.participants.map((p) => (
-                <div key={p._id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100">
-                      {p.playerName}
-                    </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {p.buyInCount} buy-in{p.buyInCount !== 1 ? 's' : ''} •{' '}
-                      {formatCurrency(p.totalBuyIns)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`font-semibold ${getProfitLossColor(p.profitLoss)}`}>
-                      {formatProfitLoss(p.profitLoss)}
-                    </p>
-                    {p.hasCashedOut && (
-                      <Badge variant="success" size="sm">
-                        Cashed out
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+              {game.participants.map((participant) => (
+                <ParticipantCard
+                  key={participant._id}
+                  participant={participant}
+                  isGameActive={isGameActive}
+                  onBuyInAdded={handleBuyInAdded}
+                />
               ))}
             </div>
           )}
+        </div>
+
+        {/* Total Buy-ins */}
+        <Card>
+          <CardTitle className="mb-3">Total Buy-Ins</CardTitle>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+              {formatCurrency(game.totalBuyIns)}
+            </p>
+          </div>
         </Card>
+
+        {/* Balance Summary - Only show difference when completed */}
+        {!isGameActive && (
+          <Card>
+            <CardTitle className="mb-4">Final Balance</CardTitle>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-zinc-600 dark:text-zinc-400">Total Buy-ins</span>
+                <span className="font-semibold">{formatCurrency(game.totalBuyIns)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-600 dark:text-zinc-400">Total Cashouts</span>
+                <span className="font-semibold">{formatCurrency(game.totalCashouts)}</span>
+              </div>
+              <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
+              <div className="flex justify-between items-center">
+                <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Difference</span>
+                <div className="flex items-center gap-2">
+                  <span className={`font-semibold ${getProfitLossColor(game.balanceDiscrepancy)}`}>
+                    {formatProfitLoss(game.balanceDiscrepancy)}
+                  </span>
+                  <Badge
+                    variant={
+                      game.balanceStatus === 'GREEN'
+                        ? 'success'
+                        : game.balanceStatus === 'YELLOW'
+                        ? 'warning'
+                        : 'danger'
+                    }
+                    size="sm"
+                  >
+                    {game.balanceStatus}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Recent Transactions */}
         <Card>
@@ -157,6 +188,15 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
           )}
         </Card>
       </main>
+
+      {/* Add Participant Modal */}
+      <AddParticipantModal
+        isOpen={showAddParticipantModal}
+        onClose={() => setShowAddParticipantModal(false)}
+        gameId={id}
+        existingParticipantIds={game.participants.map((p) => p.playerId)}
+        onParticipantAdded={handleParticipantAdded}
+      />
     </div>
   );
 }
