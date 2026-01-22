@@ -36,7 +36,8 @@
       "Bash(npm run test:chat:*)",
       "Bash(npm run test:stores:*)",
       "WebFetch(domain:docs.expo.dev)",
-      "Bash(npx create-next-app@latest poker-buddy --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm)"
+      "Bash(npx create-next-app@latest poker-buddy --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
