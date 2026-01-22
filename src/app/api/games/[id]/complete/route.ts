@@ -106,14 +106,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     const body = await request.json();
     const data = completeGameSchema.parse(body);
 
-    // Validate minimum cashout time
     const now = new Date();
-    if (now < game.minimumCashoutTime) {
-      return errorResponse(
-        `Cashouts not allowed until ${game.minimumCashoutTime.toLocaleTimeString()}`,
-        400
-      );
-    }
 
     // Get all participants with their buy-ins
     const participants = await GameParticipant.find({ gameId: id });

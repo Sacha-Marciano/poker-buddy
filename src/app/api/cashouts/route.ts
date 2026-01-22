@@ -44,14 +44,7 @@ export async function POST(request: NextRequest) {
       return errorResponse('Cannot modify completed game', 403);
     }
 
-    // Validate minimum cashout time
     const now = new Date();
-    if (now < game.minimumCashoutTime) {
-      return errorResponse(
-        `Cashouts not allowed until ${game.minimumCashoutTime.toLocaleTimeString()}. Current time: ${now.toLocaleTimeString()}`,
-        400
-      );
-    }
 
     // Validate all participant IDs
     for (const cashout of data.cashouts) {
