@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { connectDB } from '@/lib/db';
-import { Game, GameParticipant, BuyIn, Cashout } from '@/models';
+import { Game, GameParticipant, BuyIn, Cashout, Settlement, Player } from '@/models';
 import {
   errorResponse,
   successResponse,
@@ -152,6 +152,37 @@ export async function GET(request: NextRequest, context: RouteContext) {
     const balanceDiscrepancy = totalCashouts - totalBuyIns;
     const balanceStatus = getBalanceStatus(balanceDiscrepancy);
 
+    // Get settlements if game is completed
+    let settlements: Array<{
+      _id: any;
+      gameId: any;
+      fromPlayerId: any;
+      fromPlayerName: string;
+      toPlayerId: any;
+      toPlayerName: string;
+      amount: number;
+      createdAt: Date;
+    }> = [];
+    if (game.status === 'COMPLETED') {
+      const rawSettlements = await Settlement.find({ gameId: game._id });
+      settlements = await Promise.all(
+        rawSettlements.map(async (s) => {
+          const fromPlayer = await Player.findById(s.fromPlayerId);
+          const toPlayer = await Player.findById(s.toPlayerId);
+          return {
+            _id: s._id,
+            gameId: s.gameId,
+            fromPlayerId: s.fromPlayerId,
+            fromPlayerName: fromPlayer?.name || 'Unknown',
+            toPlayerId: s.toPlayerId,
+            toPlayerName: toPlayer?.name || 'Unknown',
+            amount: s.amount,
+            createdAt: s.createdAt,
+          };
+        })
+      );
+    }
+
     return successResponse({
       _id: game._id,
       location: game.location,
@@ -166,6 +197,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       balanceStatus,
       participants,
       transactions,
+      settlements,
     });
   } catch (error) {
     return handleError(error);

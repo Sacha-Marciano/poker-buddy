@@ -101,5 +101,9 @@ export interface CreateCashoutsRequest {
  * Complete game request
  */
 export interface CompleteGameRequest {
+  cashouts: Array<{
+    gameParticipantId: string;
+    amount: number;
+  }>;
   discrepancyNotes?: string;
 }

@@ -8,18 +8,24 @@ import { formatCurrency, formatProfitLoss, getProfitLossColor } from '@/lib/util
 import { AddParticipantModal } from '@/components/game/AddParticipantModal';
 import { ParticipantCard } from '@/components/game/ParticipantCard';
 import { ParticipantCardSkeleton } from '@/components/game/ParticipantCardSkeleton';
+import { EndGameModal } from '@/components/game/EndGameModal';
 import { useState } from 'react';
 
 export default function GameDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { game, isLoading, error, loadGame } = useGame(id);
   const [showAddParticipantModal, setShowAddParticipantModal] = useState(false);
+  const [showEndGameModal, setShowEndGameModal] = useState(false);
 
   const handleParticipantAdded = () => {
     loadGame(id);
   };
 
   const handleBuyInAdded = () => {
+    loadGame(id);
+  };
+
+  const handleGameCompleted = () => {
     loadGame(id);
   };
 
@@ -150,6 +156,18 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </Card>
 
+        {/* End Game Button */}
+        {isGameActive && game.participants.length > 0 && (
+          <Button
+            onClick={() => setShowEndGameModal(true)}
+            variant="danger"
+            fullWidth
+            size="lg"
+          >
+            End Game
+          </Button>
+        )}
+
         {/* Balance Summary - Only show difference when completed */}
         {!isGameActive && (
           <Card>
@@ -184,6 +202,45 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
                   </Badge>
                 </div>
               </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Settlements - Only show when completed */}
+        {!isGameActive && game.settlements.length > 0 && (
+          <Card>
+            <CardTitle className="mb-4">Settlements</CardTitle>
+            <div className="space-y-2">
+              {game.settlements.map((settlement) => (
+                <div
+                  key={settlement._id}
+                  className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        {settlement.fromPlayerName}
+                      </p>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                        pays
+                      </p>
+                    </div>
+                    <div className="px-4">
+                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                        {formatCurrency(settlement.amount)}
+                      </p>
+                    </div>
+                    <div className="flex-1 text-right">
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                        to
+                      </p>
+                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                        {settlement.toPlayerName}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </Card>
         )}
@@ -230,6 +287,15 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         gameId={id}
         existingParticipantIds={game.participants.map((p) => p.playerId)}
         onParticipantAdded={handleParticipantAdded}
+      />
+
+      {/* End Game Modal */}
+      <EndGameModal
+        isOpen={showEndGameModal}
+        onClose={() => setShowEndGameModal(false)}
+        gameId={id}
+        participants={game.participants}
+        onGameCompleted={handleGameCompleted}
       />
     </div>
   );

@@ -7,3 +7,4 @@ export {
 } from './GameParticipant';
 export { default as BuyIn, type IBuyIn, type IBuyInDocument } from './BuyIn';
 export { default as Cashout, type ICashout, type ICashoutDocument } from './Cashout';
+export { default as Settlement, type ISettlementDocument } from './Settlement';

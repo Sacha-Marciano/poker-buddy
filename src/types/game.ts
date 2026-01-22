@@ -73,6 +73,7 @@ export interface GameDetail {
   balanceStatus: BalanceStatus;
   participants: GameParticipant[];
   transactions: GameTransaction[];
+  settlements: Settlement[];
 }
 
 /**
@@ -99,6 +100,20 @@ export interface ParticipantAdded {
 }
 
 /**
+ * Settlement - who owes whom
+ */
+export interface Settlement {
+  _id: string;
+  gameId: string;
+  fromPlayerId: string;
+  fromPlayerName: string;
+  toPlayerId: string;
+  toPlayerName: string;
+  amount: number;
+  createdAt: string;
+}
+
+/**
  * Game completion result
  */
 export interface GameCompleted {
@@ -106,4 +121,11 @@ export interface GameCompleted {
   status: 'COMPLETED';
   endTime: string;
   discrepancyNotes: string | null;
+  settlements: Array<{
+    fromPlayerId: string;
+    fromPlayerName: string;
+    toPlayerId: string;
+    toPlayerName: string;
+    amount: number;
+  }>;
 }

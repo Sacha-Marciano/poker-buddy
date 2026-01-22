@@ -80,6 +80,7 @@ import type {
   GameCreated,
   ParticipantAdded,
   GameCompleted,
+  Settlement,
 } from '@/types/game';
 import type {
   CreateGameRequest,
@@ -109,6 +110,9 @@ export const gameApi = {
       method: 'PATCH',
       body: data,
     }),
+
+  getSettlements: (id: string) =>
+    apiFetch<Settlement[]>(`/games/${id}/settlements`),
 };
 
 // =====================
