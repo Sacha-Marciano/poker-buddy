@@ -24,21 +24,21 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        'sticky top-0 z-30 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800',
+        'sticky top-0 z-30 bg-black/80 backdrop-blur-xl border-b-2 border-[#00f0ff]/20',
         className
       )}
     >
-      <div className="px-4 py-3">
+      <div className="px-4 py-5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex items-center gap-4 min-w-0 flex-1">
             {showBack && (
               <button
                 onClick={() => router.back()}
-                className="p-2 -ml-2 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"
+                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#00f0ff]/20 to-[#b625ff]/20 border border-[#00f0ff]/30 hover:border-[#00f0ff] transition-all hover:shadow-[0_0_15px_rgba(0,240,255,0.5)]"
                 aria-label="Go back"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-5 h-5 text-[#00f0ff]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -53,11 +53,11 @@ export function PageHeader({
               </button>
             )}
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 truncate">
+              <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] via-[#b625ff] to-[#ff2e97] tracking-wide truncate">
                 {title}
               </h1>
               {subtitle && (
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 truncate">
+                <p className="text-sm text-zinc-400 truncate mt-1 font-medium">
                   {subtitle}
                 </p>
               )}

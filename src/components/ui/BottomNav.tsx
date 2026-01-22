@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
     href: '/',
     label: 'Create',
     icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -29,7 +29,7 @@ const navItems: NavItem[] = [
     href: '/games/history',
     label: 'History',
     icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
     href: '/players',
     label: 'Players',
     icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -57,7 +57,7 @@ const navItems: NavItem[] = [
     href: '/leaderboard',
     label: 'Ranks',
     icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -80,8 +80,8 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 safe-area-inset-bottom">
-      <div className="flex items-center justify-around h-16">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-xl border-t-2 border-[#00f0ff]/30 safe-area-inset-bottom">
+      <div className="flex items-center justify-around h-20">
         {navItems.map((item) => {
           const active = isActive(item.href);
           return (
@@ -89,14 +89,27 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center justify-center w-full h-full gap-1 transition-colors',
+                'flex flex-col items-center justify-center w-full h-full gap-1.5 transition-all duration-300 relative',
                 active
-                  ? 'text-blue-600 dark:text-blue-500'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+                  ? 'text-[#00f0ff]'
+                  : 'text-zinc-400 hover:text-[#b625ff]'
               )}
             >
-              <div className="flex-shrink-0">{item.icon}</div>
-              <span className="text-xs font-medium">{item.label}</span>
+              {active && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-[#00f0ff] via-[#b625ff] to-[#ff2e97] rounded-full shadow-[0_0_10px_rgba(0,240,255,0.8)]" />
+              )}
+              <div className={cn(
+                "transition-all duration-300",
+                active ? "scale-110 drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" : "scale-100"
+              )}>
+                {item.icon}
+              </div>
+              <span className={cn(
+                "text-xs font-bold tracking-wide uppercase",
+                active && "neon-glow"
+              )}>
+                {item.label}
+              </span>
             </Link>
           );
         })}

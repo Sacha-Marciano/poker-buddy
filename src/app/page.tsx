@@ -64,8 +64,8 @@ export default function CreateGamePage() {
   };
 
   return (
-    <div className="min-h-screen pb-20">
-      <PageHeader title="Create New Game" />
+    <div className="min-h-screen pb-24">
+      <PageHeader title="🎮 Create New Game" />
 
       <main className="p-4 space-y-6">
         {/* Create Game Form */}

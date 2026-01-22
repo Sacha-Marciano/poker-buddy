@@ -24,23 +24,23 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+      'inline-flex items-center justify-center font-bold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider';
 
     const variants = {
       primary:
-        'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+        'bg-gradient-to-r from-[#00f0ff] to-[#b625ff] text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105 focus:ring-[#00f0ff] border-2 border-[#00f0ff]/50',
       secondary:
-        'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 focus:ring-zinc-500 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700',
+        'bg-zinc-900/80 text-[#00f0ff] hover:bg-zinc-800 focus:ring-[#b625ff] border-2 border-[#00f0ff]/30 hover:border-[#00f0ff] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)]',
       danger:
-        'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+        'bg-gradient-to-r from-[#ff2e97] to-[#ff6b6b] text-white hover:shadow-[0_0_20px_rgba(255,46,151,0.6)] hover:scale-105 focus:ring-[#ff2e97] border-2 border-[#ff2e97]/50',
       ghost:
-        'bg-transparent text-zinc-700 hover:bg-zinc-100 focus:ring-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-800',
+        'bg-transparent text-[#00f0ff] hover:bg-[#00f0ff]/10 focus:ring-[#00f0ff] border-2 border-transparent hover:border-[#00f0ff]/30',
     };
 
     const sizes = {
-      sm: 'h-9 px-3 text-sm',
-      md: 'h-12 px-4 text-base min-w-[44px]', // Touch-friendly
-      lg: 'h-14 px-6 text-lg',
+      sm: 'h-10 px-4 text-xs',
+      md: 'h-12 px-6 text-sm min-w-[44px]',
+      lg: 'h-14 px-8 text-base',
     };
 
     return (

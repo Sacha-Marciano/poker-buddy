@@ -14,22 +14,22 @@ export function Card({
   ...props
 }: CardProps) {
   const variants = {
-    default: 'bg-white dark:bg-zinc-800',
-    elevated: 'bg-white dark:bg-zinc-800 shadow-md',
-    outlined: 'bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700',
+    default: 'bg-zinc-900/60 backdrop-blur-sm border border-[#00f0ff]/20',
+    elevated: 'bg-zinc-900/70 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.15)] border border-[#00f0ff]/30',
+    outlined: 'bg-zinc-900/50 backdrop-blur-sm border-2 border-[#00f0ff]/40 shadow-[0_0_15px_rgba(0,240,255,0.1)]',
   };
 
   const paddings = {
     none: '',
     sm: 'p-3',
-    md: 'p-4',
+    md: 'p-5',
     lg: 'p-6',
   };
 
   return (
     <div
       className={cn(
-        'rounded-xl',
+        'rounded-2xl transition-all duration-300',
         variants[variant],
         paddings[padding],
         className
@@ -60,7 +60,7 @@ export function CardTitle({
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-lg font-semibold text-zinc-900 dark:text-zinc-100', className)}
+      className={cn('text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] to-[#b625ff]', className)}
       {...props}
     >
       {children}

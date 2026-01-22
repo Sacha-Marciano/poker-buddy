@@ -95,7 +95,9 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         {/* Game Status */}
         <Card>
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Status</h3>
+            <h3 className="font-semibold text-zinc-100 flex items-center gap-2">
+              <span>🎯</span> Status
+            </h3>
             <Badge variant={isGameActive ? 'success' : 'default'}>
               {isGameActive ? 'Active' : 'Completed'}
             </Badge>
@@ -105,8 +107,8 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         {/* Participants */}
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
-            <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-              Players ({game.participants.length})
+            <h2 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
+              <span>👥</span> Players ({game.participants.length})
             </h2>
             {isGameActive && (
               <Button
@@ -148,7 +150,9 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* Total Buy-ins */}
         <Card>
-          <CardTitle className="mb-3">Total Buy-Ins</CardTitle>
+          <CardTitle className="mb-3 flex items-center gap-2">
+            <span>💰</span> Total Buy-Ins
+          </CardTitle>
           <div className="text-center">
             <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
               {formatCurrency(game.totalBuyIns)}
@@ -171,7 +175,9 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         {/* Balance Summary - Only show difference when completed */}
         {!isGameActive && (
           <Card>
-            <CardTitle className="mb-4">Final Balance</CardTitle>
+            <CardTitle className="mb-4 flex items-center gap-2">
+              <span>⚖️</span> Final Balance
+            </CardTitle>
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-zinc-600 dark:text-zinc-400">Total Buy-ins</span>
@@ -209,7 +215,9 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         {/* Settlements - Only show when completed */}
         {!isGameActive && game.settlements.length > 0 && (
           <Card>
-            <CardTitle className="mb-4">Settlements</CardTitle>
+            <CardTitle className="mb-4 flex items-center gap-2">
+              <span>💸</span> Settlements
+            </CardTitle>
             <div className="space-y-2">
               {game.settlements.map((settlement) => (
                 <div

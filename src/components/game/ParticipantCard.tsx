@@ -133,10 +133,10 @@ export function ParticipantCard({
                   key={amount}
                   onClick={() => handleQuickBuyIn(amount)}
                   disabled={loadingButton !== null}
-                  className={`h-12 rounded-lg font-bold text-base transition-all disabled:cursor-not-allowed relative ${
+                  className={`h-12 rounded-xl font-bold text-base transition-all duration-300 disabled:cursor-not-allowed relative border-2 ${
                     amount === 50
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
-                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                      ? 'bg-gradient-to-r from-[#00f0ff] to-[#b625ff] text-black border-[#00f0ff]/50 hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105'
+                      : 'bg-zinc-900/60 text-[#00f0ff] border-[#00f0ff]/30 hover:border-[#00f0ff] hover:bg-zinc-800/80'
                   } ${loadingButton === amount ? 'opacity-60' : ''}`}
                 >
                   {loadingButton === amount ? (
