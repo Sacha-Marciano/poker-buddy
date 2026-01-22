@@ -96,7 +96,7 @@ export function BottomNav() {
               )}
             >
               {active && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-[#00f0ff] via-[#b625ff] to-[#ff2e97] rounded-full shadow-[0_0_10px_rgba(0,240,255,0.8)]" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#00f0ff] rounded-full shadow-[0_0_10px_rgba(0,240,255,0.8)]" />
               )}
               <div className={cn(
                 "transition-all duration-300",

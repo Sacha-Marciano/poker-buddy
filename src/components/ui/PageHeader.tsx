@@ -53,7 +53,7 @@ export function PageHeader({
               </button>
             )}
             <div className="min-w-0 flex-1">
-              <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] via-[#b625ff] to-[#ff2e97] tracking-wide truncate">
+              <h1 className="text-2xl font-black text-[#00f0ff] tracking-wide truncate neon-glow">
                 {title}
               </h1>
               {subtitle && (

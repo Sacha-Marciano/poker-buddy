@@ -226,7 +226,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="text-sm font-medium text-white">
                         {settlement.fromPlayerName}
                       </p>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -242,7 +242,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
                         to
                       </p>
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="text-sm font-medium text-white">
                         {settlement.toPlayerName}
                       </p>
                     </div>

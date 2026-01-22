@@ -28,11 +28,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        'bg-gradient-to-r from-[#00f0ff] to-[#b625ff] text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105 focus:ring-[#00f0ff] border-2 border-[#00f0ff]/50',
+        'bg-[#00f0ff] text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105 focus:ring-[#00f0ff] border-2 border-[#00f0ff]/50',
       secondary:
-        'bg-zinc-900/80 text-[#00f0ff] hover:bg-zinc-800 focus:ring-[#b625ff] border-2 border-[#00f0ff]/30 hover:border-[#00f0ff] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)]',
+        'bg-zinc-900/80 text-[#00f0ff] hover:bg-zinc-800 focus:ring-[#00f0ff] border-2 border-[#00f0ff]/30 hover:border-[#00f0ff] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)]',
       danger:
-        'bg-gradient-to-r from-[#ff2e97] to-[#ff6b6b] text-white hover:shadow-[0_0_20px_rgba(255,46,151,0.6)] hover:scale-105 focus:ring-[#ff2e97] border-2 border-[#ff2e97]/50',
+        'bg-[#ff2e97] text-white hover:shadow-[0_0_20px_rgba(255,46,151,0.6)] hover:scale-105 focus:ring-[#ff2e97] border-2 border-[#ff2e97]/50',
       ghost:
         'bg-transparent text-[#00f0ff] hover:bg-[#00f0ff]/10 focus:ring-[#00f0ff] border-2 border-transparent hover:border-[#00f0ff]/30',
     };

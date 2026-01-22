@@ -60,7 +60,7 @@ export function CardTitle({
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] to-[#b625ff]', className)}
+      className={cn('text-lg font-bold text-[#00f0ff]', className)}
       {...props}
     >
       {children}

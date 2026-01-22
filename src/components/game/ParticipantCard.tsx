@@ -92,7 +92,7 @@ export function ParticipantCard({
         {/* Player Info */}
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+            <h3 className="text-xl font-bold text-white">
               {participant.playerName}
             </h3>
             <div className="flex items-center gap-3 mt-1 text-sm text-zinc-600 dark:text-zinc-400">
@@ -135,7 +135,7 @@ export function ParticipantCard({
                   disabled={loadingButton !== null}
                   className={`h-12 rounded-xl font-bold text-base transition-all duration-300 disabled:cursor-not-allowed relative border-2 ${
                     amount === 50
-                      ? 'bg-gradient-to-r from-[#00f0ff] to-[#b625ff] text-black border-[#00f0ff]/50 hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105'
+                      ? 'bg-[#00f0ff] text-black border-[#00f0ff]/50 hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105'
                       : 'bg-zinc-900/60 text-[#00f0ff] border-[#00f0ff]/30 hover:border-[#00f0ff] hover:bg-zinc-800/80'
                   } ${loadingButton === amount ? 'opacity-60' : ''}`}
                 >

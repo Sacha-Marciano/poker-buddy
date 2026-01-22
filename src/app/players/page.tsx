@@ -105,7 +105,7 @@ export default function PlayersPage() {
                 <Card className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                   <div className="flex justify-between items-start">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                      <h3 className="font-semibold text-white truncate">
                         {player.name}
                       </h3>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">

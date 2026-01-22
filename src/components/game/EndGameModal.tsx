@@ -197,7 +197,7 @@ export function EndGameModal({
           <div className="space-y-3">
             {participants.map((participant) => (
               <div key={participant._id}>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                <label className="block text-sm font-medium text-white mb-1">
                   {participant.playerName}
                 </label>
                 <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export function EndGameModal({
                 <Card key={idx} variant="outlined" className="bg-blue-50 dark:bg-blue-900/10">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="text-sm font-medium text-white">
                         {settlement.fromPlayerName}
                       </p>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
@@ -273,7 +273,7 @@ export function EndGameModal({
                       <p className="text-xs text-zinc-600 dark:text-zinc-400">
                         to
                       </p>
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="text-sm font-medium text-white">
                         {settlement.toPlayerName}
                       </p>
                     </div>

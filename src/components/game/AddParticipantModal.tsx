@@ -163,7 +163,7 @@ export function AddParticipantModal({
                     disabled={isSubmitting}
                     className="w-full text-left p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                    <p className="font-medium text-white">
                       {player.name}
                     </p>
                     <p className="text-sm text-zinc-600 dark:text-zinc-400">

@@ -80,7 +80,7 @@ export default function LeaderboardPage() {
 
                   {/* Player Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                    <h3 className="font-semibold text-white truncate">
                       {entry.playerName}
                     </h3>
                     <p className="text-sm text-zinc-600 dark:text-zinc-400">
