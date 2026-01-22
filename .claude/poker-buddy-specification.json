@@ -1,0 +1,1411 @@
+{
+  "status": "REFINED",
+  "feature_name": "Poker Buddy - Home Game Cash Tracker",
+  "version": "1.0.0",
+  "created_date": "2026-01-22",
+
+  "summary": "Poker Buddy is a mobile-first web application for tracking home poker cash games where 1 chip equals 1 Israeli Shekel (ILS). The app manages players, tracks real-time buy-ins and cashouts during game sessions, validates end-of-game balance discrepancies, and provides comprehensive statistics and leaderboards. Built with Next.js 14+, TypeScript, Tailwind CSS, and MongoDB with Mongoose ODM, it supports real-time game state management without user authentication.",
+
+  "problem_statement": "Home poker game organizers need a simple, mobile-friendly way to track cash game buy-ins, rebuys, and cashouts in real-time, ensuring accurate accounting at the end of each session. Current solutions (spreadsheets, notes apps) are error-prone and don't provide historical statistics or player performance tracking across multiple sessions.",
+
+  "scope": {
+    "included": [
+      "Player CRUD operations with soft delete",
+      "Game session management (create, in-progress, complete)",
+      "Real-time buy-in tracking with quick-add amounts",
+      "Cashout recording with minimum cashout time validation",
+      "End-of-game balance validation (red/yellow/green flags)",
+      "Discrepancy notes field",
+      "Player statistics (total games, buy-ins, cashouts, P/L)",
+      "All-time leaderboard (biggest winners/losers)",
+      "Game history with detailed per-game view",
+      "Mobile-first responsive design",
+      "Floating Action Button for quick buy-ins during active games",
+      "ILS currency formatting with ₪ symbol and thousand separators"
+    ],
+    "excluded": [
+      "User authentication/authorization",
+      "Multi-user collaboration (single-user app)",
+      "Time-based filters (last 30 days, this year)",
+      "Chip denomination tracking",
+      "CSV/Excel export",
+      "Notes/comments on games (except discrepancy notes)",
+      "Hebrew language support (English only)",
+      "Multi-currency support",
+      "Offline mode",
+      "Partial cashouts during games",
+      "Edit/delete completed games",
+      "Audit trail/version history",
+      "Player avatars or contact information",
+      "Swipe gestures"
+    ]
+  },
+
+  "data_models": [
+    {
+      "entity": "Player",
+      "collection": "players",
+      "description": "Represents a poker player in the home game group",
+      "schema": {
+        "_id": "ObjectId (auto-generated)",
+        "name": {
+          "type": "String",
+          "required": true,
+          "unique": true,
+          "trim": true,
+          "minLength": 1,
+          "maxLength": 50,
+          "index": true
+        },
+        "isDeleted": {
+          "type": "Boolean",
+          "required": true,
+          "default": false,
+          "description": "Soft delete flag - deleted players remain in DB but hidden from UI"
+        },
+        "createdAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        },
+        "updatedAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        }
+      },
+      "indexes": [
+        { "fields": { "name": 1 }, "unique": true },
+        { "fields": { "isDeleted": 1 } }
+      ],
+      "relationships": [
+        "Has many GameParticipants (via gameParticipants collection)",
+        "Has many BuyIns (via buyIns collection)",
+        "Has many Cashouts (via cashouts collection)"
+      ],
+      "validation_rules": [
+        "Name must be unique across all players (including soft-deleted)",
+        "Name cannot be empty or whitespace only",
+        "Cannot hard delete a player (only soft delete by setting isDeleted=true)",
+        "Soft-deleted players should not appear in player lists or dropdown selections"
+      ],
+      "computed_fields": [
+        "totalGamesPlayed: Count of GameParticipants where playerId matches",
+        "totalBuyIns: Sum of all BuyIn amounts for this player",
+        "totalCashouts: Sum of all Cashout amounts for this player",
+        "totalProfitLoss: totalCashouts - totalBuyIns",
+        "averageProfitPerSession: totalProfitLoss / totalGamesPlayed (if > 0)",
+        "biggestWin: Max single-game profit",
+        "biggestLoss: Min single-game profit (most negative)"
+      ]
+    },
+    {
+      "entity": "Game",
+      "collection": "games",
+      "description": "Represents a single poker game session",
+      "schema": {
+        "_id": "ObjectId (auto-generated)",
+        "location": {
+          "type": "String",
+          "required": false,
+          "trim": true,
+          "maxLength": 100,
+          "description": "Free text entry for game location"
+        },
+        "startTime": {
+          "type": "Date",
+          "required": true,
+          "description": "Game start timestamp (24h format)"
+        },
+        "endTime": {
+          "type": "Date",
+          "required": false,
+          "description": "Game end timestamp - set when game is completed"
+        },
+        "minimumCashoutTime": {
+          "type": "Date",
+          "required": true,
+          "description": "No cashouts allowed before this time (e.g., midnight)"
+        },
+        "status": {
+          "type": "String",
+          "required": true,
+          "enum": ["IN_PROGRESS", "COMPLETED"],
+          "default": "IN_PROGRESS",
+          "index": true
+        },
+        "discrepancyNotes": {
+          "type": "String",
+          "required": false,
+          "maxLength": 500,
+          "description": "Notes explaining balance discrepancies"
+        },
+        "createdAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        },
+        "updatedAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        }
+      },
+      "indexes": [
+        { "fields": { "startTime": -1 } },
+        { "fields": { "status": 1 } },
+        { "fields": { "status": 1, "startTime": -1 }, "compound": true }
+      ],
+      "relationships": [
+        "Has many GameParticipants (players in this game)",
+        "Has many BuyIns (via gameParticipants)",
+        "Has many Cashouts (via gameParticipants)"
+      ],
+      "validation_rules": [
+        "startTime cannot be in the future",
+        "minimumCashoutTime must be >= startTime",
+        "endTime must be > startTime (if provided)",
+        "endTime is required when status = COMPLETED",
+        "status cannot change from COMPLETED back to IN_PROGRESS",
+        "Cannot edit/delete buy-ins or cashouts when status = COMPLETED",
+        "Cannot change startTime, endTime, or minimumCashoutTime when status = COMPLETED"
+      ],
+      "computed_fields": [
+        "totalBuyIns: Sum of all BuyIn amounts for this game",
+        "totalCashouts: Sum of all Cashout amounts for this game",
+        "balanceDiscrepancy: totalCashouts - totalBuyIns",
+        "balanceStatus: GREEN (discrepancy = 0), YELLOW (discrepancy < 0), RED (discrepancy > 0)",
+        "participantCount: Count of GameParticipants",
+        "duration: endTime - startTime (in hours/minutes)"
+      ]
+    },
+    {
+      "entity": "GameParticipant",
+      "collection": "gameParticipants",
+      "description": "Junction table linking Players to Games with per-player game statistics",
+      "schema": {
+        "_id": "ObjectId (auto-generated)",
+        "gameId": {
+          "type": "ObjectId",
+          "required": true,
+          "ref": "Game",
+          "index": true
+        },
+        "playerId": {
+          "type": "ObjectId",
+          "required": true,
+          "ref": "Player",
+          "index": true
+        },
+        "joinedAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now",
+          "description": "When player was added to the game"
+        },
+        "createdAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        }
+      },
+      "indexes": [
+        { "fields": { "gameId": 1, "playerId": 1 }, "unique": true },
+        { "fields": { "playerId": 1 } },
+        { "fields": { "gameId": 1 } }
+      ],
+      "relationships": [
+        "Belongs to one Game",
+        "Belongs to one Player",
+        "Has many BuyIns",
+        "Has one Cashout (0 or 1)"
+      ],
+      "validation_rules": [
+        "Cannot add same player to same game twice",
+        "playerId must reference an active (non-deleted) Player",
+        "gameId must reference an existing Game",
+        "Cannot remove participant if they have buy-ins or cashouts"
+      ],
+      "computed_fields": [
+        "totalBuyIns: Sum of all BuyIn amounts for this participant",
+        "totalCashouts: Sum of all Cashout amounts for this participant (should be 0 or 1 cashout)",
+        "profitLoss: totalCashouts - totalBuyIns",
+        "buyInCount: Count of BuyIns for this participant"
+      ]
+    },
+    {
+      "entity": "BuyIn",
+      "collection": "buyIns",
+      "description": "Represents a single buy-in transaction (including rebuys)",
+      "schema": {
+        "_id": "ObjectId (auto-generated)",
+        "gameParticipantId": {
+          "type": "ObjectId",
+          "required": true,
+          "ref": "GameParticipant",
+          "index": true
+        },
+        "amount": {
+          "type": "Number",
+          "required": true,
+          "min": 1,
+          "max": 1000000,
+          "description": "Buy-in amount in ILS (integer, no decimals)"
+        },
+        "timestamp": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now",
+          "description": "When this buy-in occurred"
+        },
+        "createdAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        }
+      },
+      "indexes": [
+        { "fields": { "gameParticipantId": 1, "timestamp": -1 } },
+        { "fields": { "timestamp": -1 } }
+      ],
+      "relationships": [
+        "Belongs to one GameParticipant"
+      ],
+      "validation_rules": [
+        "amount must be a positive integer (no decimals)",
+        "amount must be between 1 and 1,000,000 ILS",
+        "timestamp cannot be before game.startTime",
+        "timestamp cannot be in the future",
+        "Cannot create/edit/delete buy-ins when game.status = COMPLETED",
+        "gameParticipantId must reference an existing GameParticipant"
+      ]
+    },
+    {
+      "entity": "Cashout",
+      "collection": "cashouts",
+      "description": "Represents a player's final cashout amount at end of game",
+      "schema": {
+        "_id": "ObjectId (auto-generated)",
+        "gameParticipantId": {
+          "type": "ObjectId",
+          "required": true,
+          "ref": "GameParticipant",
+          "unique": true,
+          "index": true,
+          "description": "One cashout per game participant"
+        },
+        "amount": {
+          "type": "Number",
+          "required": true,
+          "min": 0,
+          "max": 1000000,
+          "description": "Cashout amount in ILS (0 if player left early)"
+        },
+        "timestamp": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now",
+          "description": "When this cashout occurred"
+        },
+        "createdAt": {
+          "type": "Date",
+          "required": true,
+          "default": "Date.now"
+        }
+      },
+      "indexes": [
+        { "fields": { "gameParticipantId": 1 }, "unique": true },
+        { "fields": { "timestamp": -1 } }
+      ],
+      "relationships": [
+        "Belongs to one GameParticipant"
+      ],
+      "validation_rules": [
+        "amount must be a non-negative integer (0 or positive, no decimals)",
+        "amount must be between 0 and 1,000,000 ILS",
+        "timestamp must be >= game.minimumCashoutTime",
+        "timestamp cannot be in the future",
+        "Only one cashout allowed per gameParticipantId",
+        "Cannot create/edit/delete cashouts when game.status = COMPLETED",
+        "gameParticipantId must reference an existing GameParticipant"
+      ]
+    }
+  ],
+
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "category": "Player Management",
+      "description": "Create a new player with unique name",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can enter player name in a form",
+        "System validates name is not empty and is unique",
+        "System trims whitespace from name",
+        "Player is saved to database with isDeleted=false",
+        "Success message shown and player appears in player list"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "category": "Player Management",
+      "description": "Edit existing player name",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can edit player name from player detail view",
+        "System validates new name is unique (excluding current player)",
+        "System updates updatedAt timestamp",
+        "Changes reflected immediately in UI"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "category": "Player Management",
+      "description": "Soft delete player",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can delete player from player list or detail view",
+        "System sets isDeleted=true instead of removing from database",
+        "Deleted players disappear from all player lists and dropdowns",
+        "Historical game data for deleted player is preserved",
+        "System shows confirmation dialog before deletion"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "category": "Player Management",
+      "description": "View player statistics",
+      "priority": "must",
+      "acceptance_criteria": [
+        "Player detail page shows: total games played, total buy-ins, total cashouts, total P/L",
+        "Shows average profit per session (if games > 0)",
+        "Shows biggest win and biggest loss in a single game",
+        "Shows list of games player participated in with individual P/L",
+        "All amounts formatted with ₪ symbol and thousand separators"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "category": "Game Session",
+      "description": "Create new game session",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can create game with optional location (free text)",
+        "User sets start time (defaults to current time)",
+        "User sets minimum cashout time (defaults to midnight)",
+        "Game status automatically set to IN_PROGRESS",
+        "Game appears in active games list"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "category": "Game Session",
+      "description": "Add player to in-progress game",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can select player from dropdown (showing only non-deleted players)",
+        "System creates GameParticipant record with joinedAt timestamp",
+        "Player cannot be added twice to same game",
+        "Player appears in game participants list immediately"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "category": "Game Session",
+      "description": "Record buy-in during active game",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can select player and enter buy-in amount",
+        "Quick-add buttons available for: 1, 5, 10, 25, 50, 100 ILS",
+        "FAB (Floating Action Button) provides quick access to buy-in form",
+        "Amount must be positive integer between 1-1,000,000",
+        "Buy-in timestamp auto-set to current time",
+        "Buy-in appears in game transaction log immediately",
+        "Game totals update in real-time"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "category": "Game Session",
+      "description": "Edit buy-in during active game",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can edit amount or delete buy-in from transaction log",
+        "Changes only allowed when game.status = IN_PROGRESS",
+        "System shows confirmation dialog for deletion",
+        "Game totals recalculate immediately"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "category": "Game Session",
+      "description": "Record cashout",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can select player and enter cashout amount",
+        "System validates cashout timestamp >= game.minimumCashoutTime",
+        "Amount must be non-negative integer 0-1,000,000",
+        "If player left early, cashout defaults to 0",
+        "Only one cashout allowed per player per game",
+        "Cashout appears in game summary immediately",
+        "Balance status updates (green/yellow/red)"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "category": "Game Session",
+      "description": "Complete game session",
+      "priority": "must",
+      "acceptance_criteria": [
+        "User can complete game from game detail view",
+        "System calculates balanceDiscrepancy = totalCashouts - totalBuyIns",
+        "Shows balance status: GREEN (0), YELLOW (negative), RED (positive)",
+        "User can enter discrepancy notes (optional, max 500 chars)",
+        "System allows completion even with discrepancy",
+        "Sets game.status = COMPLETED and game.endTime = current time",
+        "Completed games cannot be edited"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "category": "Game Session",
+      "description": "View in-progress games",
+      "priority": "must",
+      "acceptance_criteria": [
+        "Dashboard shows list of games where status = IN_PROGRESS",
+        "Each game shows: start time, location, participant count, total buy-ins",
+        "User can tap to enter game detail view",
+        "List sorted by startTime descending (most recent first)"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "category": "Game History",
+      "description": "View completed games list",
+      "priority": "must",
+      "acceptance_criteria": [
+        "Game history page shows all games where status = COMPLETED",
+        "Each game shows: date, location, participants, total P/L, balance status",
+        "List sorted by endTime descending (most recent first)",
+        "User can tap to view game details"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "category": "Game History",
+      "description": "View detailed game summary",
+      "priority": "must",
+      "acceptance_criteria": [
+        "Shows game metadata: date, location, start/end time, duration",
+        "Shows all participants with: buy-in count, total buy-ins, cashout, P/L",
+        "Shows total buy-ins, total cashouts, balance discrepancy",
+        "Shows balance status indicator (green/yellow/red)",
+        "Shows discrepancy notes if present",
+        "Shows transaction log (all buy-ins chronologically)"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "category": "Statistics",
+      "description": "View all-time leaderboard",
+      "priority": "must",
+      "acceptance_criteria": [
+        "Leaderboard page shows all non-deleted players",
+        "Sorted by totalProfitLoss descending (biggest winners first)",
+        "Shows: player name, total games, total P/L, avg P/L per session",
+        "No minimum session requirement",
+        "All amounts formatted with ₪ and thousand separators",
+        "Negative P/L shown in red, positive in green"
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "category": "UI/UX",
+      "description": "Mobile-first responsive design",
+      "priority": "must",
+      "acceptance_criteria": [
+        "All screens optimized for mobile (320px-768px)",
+        "Touch-friendly buttons (min 44x44px tap targets)",
+        "Responsive layout scales to tablet and desktop",
+        "No horizontal scrolling required",
+        "Forms use mobile-optimized input types (number keypad for amounts)"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "category": "UI/UX",
+      "description": "Currency formatting",
+      "priority": "must",
+      "acceptance_criteria": [
+        "All amounts display with ₪ symbol",
+        "Thousand separators used (e.g., 1,500 ₪)",
+        "Negative amounts shown with minus sign (e.g., -500 ₪)",
+        "Consistent formatting across all screens"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "category": "UI/UX",
+      "description": "Floating Action Button for buy-ins",
+      "priority": "must",
+      "acceptance_criteria": [
+        "FAB visible on game detail screen when game.status = IN_PROGRESS",
+        "Tapping FAB opens quick buy-in form",
+        "FAB positioned in bottom-right corner",
+        "FAB hidden when game.status = COMPLETED"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "category": "Validation",
+      "description": "Minimum cashout time enforcement",
+      "priority": "must",
+      "acceptance_criteria": [
+        "System prevents cashout entry if current time < game.minimumCashoutTime",
+        "Error message explains cashout not allowed until minimum time",
+        "Validation occurs on both client and server side"
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "category": "Validation",
+      "description": "Completed game immutability",
+      "priority": "must",
+      "acceptance_criteria": [
+        "When game.status = COMPLETED, all edit/delete buttons hidden",
+        "API rejects any attempts to modify completed game data",
+        "Clear visual indicator that game is locked"
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "category": "Navigation",
+      "description": "Primary navigation structure",
+      "priority": "must",
+      "acceptance_criteria": [
+        "Bottom navigation bar with tabs: Dashboard, Players, Leaderboard",
+        "Dashboard shows active games and quick actions",
+        "Players tab shows player list and add player button",
+        "Leaderboard tab shows all-time statistics",
+        "Game History accessible from dashboard"
+      ]
+    }
+  ],
+
+  "user_flows": [
+    {
+      "flow_name": "Create New Game and Record Buy-ins",
+      "steps": [
+        "User taps 'New Game' button on Dashboard",
+        "User enters optional location, sets start time (defaults to now), sets minimum cashout time (defaults to midnight)",
+        "User taps 'Create Game'",
+        "System creates game with status=IN_PROGRESS",
+        "User redirected to Game Detail screen",
+        "User taps 'Add Player' and selects player from dropdown",
+        "Player added to participants list",
+        "User taps FAB (floating action button) to record buy-in",
+        "User selects player, enters amount (or uses quick-add buttons: 1, 5, 10, 25, 50, 100)",
+        "Buy-in recorded and appears in transaction log",
+        "Game totals update in real-time",
+        "Repeat buy-in steps for all players and rebuys"
+      ]
+    },
+    {
+      "flow_name": "End Game and Validate Balance",
+      "steps": [
+        "User on Game Detail screen with status=IN_PROGRESS",
+        "User taps 'Cash Out Players' button",
+        "User enters cashout amount for each player (0 if left early)",
+        "System validates cashout time >= minimumCashoutTime",
+        "Cashouts recorded",
+        "User taps 'Complete Game'",
+        "System calculates balance: totalCashouts - totalBuyIns",
+        "System displays balance status: GREEN (balanced), YELLOW (extra chips), RED (missing chips)",
+        "If discrepancy exists, user can add notes explaining resolution",
+        "User confirms completion",
+        "Game status set to COMPLETED, endTime recorded",
+        "Game moved to History, no longer editable"
+      ]
+    },
+    {
+      "flow_name": "View Player Statistics",
+      "steps": [
+        "User navigates to Players tab",
+        "User taps on a player name",
+        "Player Detail screen shows: total games, total buy-ins, total cashouts, total P/L, average P/L, biggest win, biggest loss",
+        "User scrolls to see list of games player participated in",
+        "Each game shows: date, location, buy-ins, cashout, P/L for this player",
+        "User can tap on a game to view full game details"
+      ]
+    },
+    {
+      "flow_name": "View Leaderboard",
+      "steps": [
+        "User navigates to Leaderboard tab",
+        "System displays all non-deleted players sorted by total P/L (descending)",
+        "Each row shows: rank, player name, total games, total P/L, avg P/L per session",
+        "Positive P/L displayed in green, negative in red",
+        "User can tap player to view detailed statistics"
+      ]
+    },
+    {
+      "flow_name": "Edit Buy-in During Active Game",
+      "steps": [
+        "User on Game Detail screen with status=IN_PROGRESS",
+        "User sees transaction log with all buy-ins",
+        "User taps edit icon next to a buy-in entry",
+        "User modifies amount",
+        "System validates amount (1-1,000,000)",
+        "Buy-in updated, game totals recalculate",
+        "OR user taps delete icon, confirms deletion, buy-in removed"
+      ]
+    },
+    {
+      "flow_name": "Player Leaves Early (Zero Cashout)",
+      "steps": [
+        "User on Game Detail screen during cashout phase",
+        "User recording cashouts for all players",
+        "For player who left early, user enters 0 as cashout amount",
+        "System accepts 0 as valid cashout",
+        "Player's P/L calculated as: 0 - totalBuyIns (negative)"
+      ]
+    }
+  ],
+
+  "edge_cases": [
+    {
+      "case": "User tries to create player with duplicate name",
+      "expected_behavior": "System shows error: 'Player name already exists. Please choose a different name.'"
+    },
+    {
+      "case": "User tries to add same player to game twice",
+      "expected_behavior": "Player dropdown excludes already-added players, or system shows error if somehow attempted"
+    },
+    {
+      "case": "User tries to record cashout before minimumCashoutTime",
+      "expected_behavior": "System blocks submission and shows error: 'Cashouts not allowed until [time]. Current time: [current].'"
+    },
+    {
+      "case": "User tries to edit completed game",
+      "expected_behavior": "All edit/delete buttons hidden. If API called directly, returns 403 Forbidden with message: 'Cannot modify completed game.'"
+    },
+    {
+      "case": "User tries to delete player who has game history",
+      "expected_behavior": "System performs soft delete (sets isDeleted=true), player hidden but history preserved"
+    },
+    {
+      "case": "Game has balance discrepancy at completion",
+      "expected_behavior": "System allows completion, shows RED (money missing) or YELLOW (extra money) indicator, prompts for discrepancy notes"
+    },
+    {
+      "case": "User enters buy-in amount with decimals (e.g., 50.50)",
+      "expected_behavior": "Client-side number input should prevent decimals (type='number' step='1'), server validates integers only"
+    },
+    {
+      "case": "User creates game with start time in the future",
+      "expected_behavior": "System shows error: 'Start time cannot be in the future.'"
+    },
+    {
+      "case": "User navigates away from in-progress game without completing",
+      "expected_behavior": "Game remains with status=IN_PROGRESS, can be resumed later from Dashboard"
+    },
+    {
+      "case": "Player has 0 games played",
+      "expected_behavior": "Statistics show 'No games played yet', averages show 'N/A', biggest win/loss show 'N/A'"
+    },
+    {
+      "case": "All players cash out 0 (everyone lost their buy-ins to missing chips)",
+      "expected_behavior": "System calculates balanceDiscrepancy = 0 - totalBuyIns (large negative number), shows RED flag"
+    },
+    {
+      "case": "Game has participants but no buy-ins recorded",
+      "expected_behavior": "System allows completion, totalBuyIns = 0, likely shows YELLOW flag if any cashouts > 0"
+    },
+    {
+      "case": "User enters extremely large amount (e.g., 10,000,000)",
+      "expected_behavior": "System rejects with error: 'Amount must be between 1 and 1,000,000 ILS.'"
+    },
+    {
+      "case": "Network error during game creation/update",
+      "expected_behavior": "System shows error message: 'Network error. Please check connection and try again.', data not saved"
+    },
+    {
+      "case": "User deletes last buy-in for a player during active game",
+      "expected_behavior": "System allows deletion (player may have been added by mistake), game totals update"
+    }
+  ],
+
+  "screens": [
+    {
+      "screen_name": "Dashboard",
+      "route": "/",
+      "description": "Home screen showing active games and quick actions",
+      "components": [
+        "Bottom navigation bar (Dashboard, Players, Leaderboard tabs)",
+        "Page title: 'Poker Buddy'",
+        "Section: Active Games",
+        "List of games with status=IN_PROGRESS (each shows: start time, location, participants count, total buy-ins)",
+        "Empty state: 'No active games' with 'Start New Game' button",
+        "Section: Quick Actions",
+        "'New Game' button (primary action)",
+        "'View History' button (secondary action)"
+      ],
+      "interactions": [
+        "Tap 'New Game' → Navigate to Create Game screen",
+        "Tap active game card → Navigate to Game Detail screen",
+        "Tap 'View History' → Navigate to Game History screen",
+        "Bottom nav tap → Navigate to respective tab"
+      ]
+    },
+    {
+      "screen_name": "Create Game",
+      "route": "/games/new",
+      "description": "Form to create new game session",
+      "components": [
+        "Back button",
+        "Page title: 'New Game'",
+        "Form fields:",
+        "  - Location (text input, optional, placeholder: 'e.g., John's place')",
+        "  - Start Time (datetime input, defaults to now)",
+        "  - Minimum Cashout Time (time input, defaults to midnight 00:00)",
+        "'Create Game' button (disabled until form valid)",
+        "'Cancel' button"
+      ],
+      "interactions": [
+        "Tap 'Create Game' → Validate, create game in DB, navigate to Game Detail screen",
+        "Tap 'Cancel' → Navigate back to Dashboard"
+      ],
+      "validation": [
+        "Start time cannot be in future",
+        "Minimum cashout time must be >= start time"
+      ]
+    },
+    {
+      "screen_name": "Game Detail (In Progress)",
+      "route": "/games/[id]",
+      "description": "Real-time view of active game with buy-ins and participants",
+      "components": [
+        "Back button",
+        "Page title: Game date and location",
+        "Game metadata: Start time, Minimum cashout time, Duration (elapsed)",
+        "Section: Balance Summary",
+        "  - Total Buy-ins: [amount] ₪",
+        "  - Total Cashouts: [amount] ₪",
+        "  - Current Balance: [difference] ₪",
+        "Section: Participants",
+        "  - List of players (each shows: name, buy-in count, total buy-ins)",
+        "  - 'Add Player' button",
+        "Section: Transaction Log",
+        "  - Chronological list of all buy-ins (timestamp, player, amount, edit/delete icons)",
+        "FAB (Floating Action Button): '+' icon for quick buy-in",
+        "'Cash Out Players' button (primary action)",
+        "'Complete Game' button (secondary action, only enabled after all cashouts recorded)"
+      ],
+      "interactions": [
+        "Tap FAB → Open quick buy-in modal",
+        "Tap 'Add Player' → Open player selection dropdown",
+        "Tap edit icon on buy-in → Open edit modal",
+        "Tap delete icon on buy-in → Show confirmation, delete",
+        "Tap 'Cash Out Players' → Navigate to Cashout screen",
+        "Tap 'Complete Game' → Navigate to Complete Game screen"
+      ]
+    },
+    {
+      "screen_name": "Quick Buy-in Modal",
+      "route": "Modal overlay",
+      "description": "Fast buy-in entry during active game",
+      "components": [
+        "Modal title: 'Record Buy-in'",
+        "Player selector (dropdown, shows current game participants)",
+        "Amount input (number, placeholder: 'Amount in ₪')",
+        "Quick-add buttons: 1, 5, 10, 25, 50, 100 ILS (tap to set amount)",
+        "'Record' button (primary)",
+        "'Cancel' button"
+      ],
+      "interactions": [
+        "Select player → Enable amount input",
+        "Tap quick-add button → Set amount field",
+        "Type custom amount → Update amount field",
+        "Tap 'Record' → Validate, save buy-in, close modal, update game view",
+        "Tap 'Cancel' → Close modal"
+      ],
+      "validation": [
+        "Player must be selected",
+        "Amount must be 1-1,000,000",
+        "Amount must be integer (no decimals)"
+      ]
+    },
+    {
+      "screen_name": "Cashout Screen",
+      "route": "/games/[id]/cashout",
+      "description": "Record final cashout amounts for all participants",
+      "components": [
+        "Back button",
+        "Page title: 'Cash Out Players'",
+        "Info banner: 'Cashouts allowed after [minimumCashoutTime]'",
+        "List of participants (each has: name, total buy-ins, cashout input field)",
+        "For each player: Amount input (number, defaults to 0)",
+        "'Save All Cashouts' button (primary)",
+        "'Cancel' button"
+      ],
+      "interactions": [
+        "Enter cashout amount for each player",
+        "Tap 'Save All Cashouts' → Validate times, save all cashouts, navigate back to Game Detail",
+        "Tap 'Cancel' → Navigate back without saving"
+      ],
+      "validation": [
+        "Current time must be >= minimumCashoutTime",
+        "Amounts must be 0-1,000,000",
+        "Amounts must be integers"
+      ]
+    },
+    {
+      "screen_name": "Complete Game Screen",
+      "route": "/games/[id]/complete",
+      "description": "Finalize game with balance validation",
+      "components": [
+        "Back button",
+        "Page title: 'Complete Game'",
+        "Section: Balance Summary",
+        "  - Total Buy-ins: [amount] ₪",
+        "  - Total Cashouts: [amount] ₪",
+        "  - Discrepancy: [amount] ₪",
+        "  - Status indicator: GREEN (Balanced) / YELLOW (Extra chips) / RED (Missing chips)",
+        "Discrepancy notes (textarea, optional, max 500 chars, placeholder: 'Explain what happened...')",
+        "'Complete Game' button (primary)",
+        "'Cancel' button"
+      ],
+      "interactions": [
+        "Review balance summary",
+        "If discrepancy, enter notes (optional)",
+        "Tap 'Complete Game' → Set status=COMPLETED, endTime=now, navigate to Game Detail (Completed view)",
+        "Tap 'Cancel' → Navigate back to Game Detail"
+      ]
+    },
+    {
+      "screen_name": "Game Detail (Completed)",
+      "route": "/games/[id]",
+      "description": "Read-only view of completed game",
+      "components": [
+        "Back button",
+        "Page title: Game date and location",
+        "Status badge: 'COMPLETED'",
+        "Game metadata: Start time, End time, Duration",
+        "Section: Final Balance",
+        "  - Total Buy-ins: [amount] ₪",
+        "  - Total Cashouts: [amount] ₪",
+        "  - Discrepancy: [amount] ₪",
+        "  - Status indicator: GREEN/YELLOW/RED",
+        "  - Discrepancy notes (if present)",
+        "Section: Participants",
+        "  - Table: Player | Buy-ins | Cashout | P/L",
+        "  - Each row shows final amounts, P/L color-coded (green=profit, red=loss)",
+        "Section: Transaction Log",
+        "  - Chronological list of all buy-ins (read-only, no edit/delete)"
+      ],
+      "interactions": [
+        "Tap player name → Navigate to Player Detail",
+        "Tap Back → Navigate to Game History or Dashboard"
+      ]
+    },
+    {
+      "screen_name": "Game History",
+      "route": "/games/history",
+      "description": "List of all completed games",
+      "components": [
+        "Back button",
+        "Page title: 'Game History'",
+        "List of games with status=COMPLETED (sorted by endTime desc)",
+        "Each game card shows:",
+        "  - Date and location",
+        "  - Participants count",
+        "  - Total buy-ins and cashouts",
+        "  - Balance status icon (green/yellow/red dot)",
+        "Empty state: 'No completed games yet'"
+      ],
+      "interactions": [
+        "Tap game card → Navigate to Game Detail (Completed view)",
+        "Pull to refresh → Reload list"
+      ]
+    },
+    {
+      "screen_name": "Players List",
+      "route": "/players",
+      "description": "List of all active players",
+      "components": [
+        "Bottom navigation bar (Dashboard, Players, Leaderboard tabs)",
+        "Page title: 'Players'",
+        "'Add Player' button (top right)",
+        "List of players (excluding isDeleted=true)",
+        "Each player card shows: name, total games, total P/L",
+        "Empty state: 'No players yet. Add your first player!'"
+      ],
+      "interactions": [
+        "Tap 'Add Player' → Open Add Player modal",
+        "Tap player card → Navigate to Player Detail"
+      ]
+    },
+    {
+      "screen_name": "Add/Edit Player Modal",
+      "route": "Modal overlay",
+      "description": "Create or edit player",
+      "components": [
+        "Modal title: 'Add Player' or 'Edit Player'",
+        "Name input (text, required, max 50 chars)",
+        "'Save' button (primary)",
+        "'Cancel' button",
+        "For edit mode: 'Delete Player' button (danger)"
+      ],
+      "interactions": [
+        "Enter name",
+        "Tap 'Save' → Validate uniqueness, save player, close modal, refresh list",
+        "Tap 'Delete Player' → Show confirmation, soft delete (set isDeleted=true), close modal",
+        "Tap 'Cancel' → Close modal without saving"
+      ],
+      "validation": [
+        "Name required",
+        "Name must be unique (case-insensitive)",
+        "Name max 50 characters"
+      ]
+    },
+    {
+      "screen_name": "Player Detail",
+      "route": "/players/[id]",
+      "description": "Detailed player statistics and game history",
+      "components": [
+        "Back button",
+        "Page title: Player name",
+        "'Edit' button (top right)",
+        "Section: Overview",
+        "  - Total Games Played: [count]",
+        "  - Total Buy-ins: [amount] ₪",
+        "  - Total Cashouts: [amount] ₪",
+        "  - Total P/L: [amount] ₪ (color-coded)",
+        "  - Average P/L per Session: [amount] ₪",
+        "  - Biggest Win: [amount] ₪",
+        "  - Biggest Loss: [amount] ₪",
+        "Section: Game History",
+        "  - List of games player participated in",
+        "  - Each game shows: date, location, buy-ins, cashout, P/L (for this player)"
+      ],
+      "interactions": [
+        "Tap 'Edit' → Open Edit Player modal",
+        "Tap game card → Navigate to Game Detail",
+        "Tap Back → Navigate to Players List"
+      ]
+    },
+    {
+      "screen_name": "Leaderboard",
+      "route": "/leaderboard",
+      "description": "All-time player rankings by total profit/loss",
+      "components": [
+        "Bottom navigation bar (Dashboard, Players, Leaderboard tabs)",
+        "Page title: 'Leaderboard'",
+        "Subtitle: 'All-Time Rankings'",
+        "Ranked list of players (sorted by totalProfitLoss desc)",
+        "Each row shows:",
+        "  - Rank (1, 2, 3...)",
+        "  - Player name",
+        "  - Total Games",
+        "  - Total P/L (color-coded: green=positive, red=negative)",
+        "  - Avg P/L per Session",
+        "Empty state: 'No players yet'"
+      ],
+      "interactions": [
+        "Tap player row → Navigate to Player Detail"
+      ]
+    }
+  ],
+
+  "api_endpoints": [
+    {
+      "endpoint": "POST /api/players",
+      "description": "Create new player",
+      "request_body": {
+        "name": "string (required, 1-50 chars, unique)"
+      },
+      "response": {
+        "success": {
+          "status": 201,
+          "body": {
+            "_id": "ObjectId",
+            "name": "string",
+            "isDeleted": false,
+            "createdAt": "Date",
+            "updatedAt": "Date"
+          }
+        },
+        "error": {
+          "status": 400,
+          "body": {
+            "error": "Player name already exists"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "GET /api/players",
+      "description": "Get all active players (isDeleted=false)",
+      "query_params": "none",
+      "response": {
+        "success": {
+          "status": 200,
+          "body": [
+            {
+              "_id": "ObjectId",
+              "name": "string",
+              "totalGamesPlayed": "number",
+              "totalProfitLoss": "number"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "endpoint": "GET /api/players/[id]",
+      "description": "Get player details with statistics",
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "_id": "ObjectId",
+            "name": "string",
+            "totalGamesPlayed": "number",
+            "totalBuyIns": "number",
+            "totalCashouts": "number",
+            "totalProfitLoss": "number",
+            "averageProfitPerSession": "number | null",
+            "biggestWin": "number | null",
+            "biggestLoss": "number | null",
+            "games": [
+              {
+                "gameId": "ObjectId",
+                "date": "Date",
+                "location": "string",
+                "buyIns": "number",
+                "cashout": "number",
+                "profitLoss": "number"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "PATCH /api/players/[id]",
+      "description": "Update player name",
+      "request_body": {
+        "name": "string (required, 1-50 chars, unique)"
+      },
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "_id": "ObjectId",
+            "name": "string",
+            "updatedAt": "Date"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "DELETE /api/players/[id]",
+      "description": "Soft delete player (set isDeleted=true)",
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "Player deleted successfully"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "POST /api/games",
+      "description": "Create new game",
+      "request_body": {
+        "location": "string (optional, max 100 chars)",
+        "startTime": "Date (required)",
+        "minimumCashoutTime": "Date (required, >= startTime)"
+      },
+      "response": {
+        "success": {
+          "status": 201,
+          "body": {
+            "_id": "ObjectId",
+            "location": "string | null",
+            "startTime": "Date",
+            "minimumCashoutTime": "Date",
+            "status": "IN_PROGRESS",
+            "createdAt": "Date"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "GET /api/games",
+      "description": "Get all games (optionally filter by status)",
+      "query_params": {
+        "status": "IN_PROGRESS | COMPLETED (optional)"
+      },
+      "response": {
+        "success": {
+          "status": 200,
+          "body": [
+            {
+              "_id": "ObjectId",
+              "location": "string | null",
+              "startTime": "Date",
+              "endTime": "Date | null",
+              "status": "string",
+              "participantCount": "number",
+              "totalBuyIns": "number",
+              "totalCashouts": "number"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "endpoint": "GET /api/games/[id]",
+      "description": "Get game details with participants and transactions",
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "_id": "ObjectId",
+            "location": "string | null",
+            "startTime": "Date",
+            "endTime": "Date | null",
+            "minimumCashoutTime": "Date",
+            "status": "string",
+            "discrepancyNotes": "string | null",
+            "totalBuyIns": "number",
+            "totalCashouts": "number",
+            "balanceDiscrepancy": "number",
+            "balanceStatus": "GREEN | YELLOW | RED",
+            "participants": [
+              {
+                "playerId": "ObjectId",
+                "playerName": "string",
+                "totalBuyIns": "number",
+                "totalCashouts": "number",
+                "profitLoss": "number",
+                "buyInCount": "number"
+              }
+            ],
+            "transactions": [
+              {
+                "_id": "ObjectId",
+                "playerId": "ObjectId",
+                "playerName": "string",
+                "amount": "number",
+                "timestamp": "Date",
+                "type": "BUY_IN | CASHOUT"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "PATCH /api/games/[id]/complete",
+      "description": "Complete game (set status=COMPLETED)",
+      "request_body": {
+        "discrepancyNotes": "string (optional, max 500 chars)"
+      },
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "_id": "ObjectId",
+            "status": "COMPLETED",
+            "endTime": "Date",
+            "discrepancyNotes": "string | null"
+          }
+        },
+        "error": {
+          "status": 400,
+          "body": {
+            "error": "Game already completed"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "POST /api/games/[id]/participants",
+      "description": "Add player to game",
+      "request_body": {
+        "playerId": "ObjectId (required)"
+      },
+      "response": {
+        "success": {
+          "status": 201,
+          "body": {
+            "_id": "ObjectId",
+            "gameId": "ObjectId",
+            "playerId": "ObjectId",
+            "joinedAt": "Date"
+          }
+        },
+        "error": {
+          "status": 400,
+          "body": {
+            "error": "Player already in game"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "POST /api/buy-ins",
+      "description": "Record buy-in",
+      "request_body": {
+        "gameParticipantId": "ObjectId (required)",
+        "amount": "number (required, 1-1000000)",
+        "timestamp": "Date (optional, defaults to now)"
+      },
+      "response": {
+        "success": {
+          "status": 201,
+          "body": {
+            "_id": "ObjectId",
+            "gameParticipantId": "ObjectId",
+            "amount": "number",
+            "timestamp": "Date"
+          }
+        },
+        "error": {
+          "status": 400,
+          "body": {
+            "error": "Cannot modify completed game"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "PATCH /api/buy-ins/[id]",
+      "description": "Update buy-in amount",
+      "request_body": {
+        "amount": "number (required, 1-1000000)"
+      },
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "_id": "ObjectId",
+            "amount": "number",
+            "updatedAt": "Date"
+          }
+        },
+        "error": {
+          "status": 403,
+          "body": {
+            "error": "Cannot modify completed game"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "DELETE /api/buy-ins/[id]",
+      "description": "Delete buy-in",
+      "response": {
+        "success": {
+          "status": 200,
+          "body": {
+            "message": "Buy-in deleted successfully"
+          }
+        },
+        "error": {
+          "status": 403,
+          "body": {
+            "error": "Cannot modify completed game"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "POST /api/cashouts",
+      "description": "Record cashout",
+      "request_body": {
+        "gameParticipantId": "ObjectId (required)",
+        "amount": "number (required, 0-1000000)",
+        "timestamp": "Date (optional, defaults to now)"
+      },
+      "response": {
+        "success": {
+          "status": 201,
+          "body": {
+            "_id": "ObjectId",
+            "gameParticipantId": "ObjectId",
+            "amount": "number",
+            "timestamp": "Date"
+          }
+        },
+        "error": {
+          "status": 400,
+          "body": {
+            "error": "Cashout time must be after minimum cashout time"
+          }
+        }
+      }
+    },
+    {
+      "endpoint": "GET /api/leaderboard",
+      "description": "Get all-time leaderboard",
+      "response": {
+        "success": {
+          "status": 200,
+          "body": [
+            {
+              "playerId": "ObjectId",
+              "playerName": "string",
+              "totalGamesPlayed": "number",
+              "totalProfitLoss": "number",
+              "averageProfitPerSession": "number | null"
+            }
+          ]
+        }
+      }
+    }
+  ],
+
+  "constraints": {
+    "performance": "All database queries should use appropriate indexes. Leaderboard calculation should be optimized (consider aggregation pipeline or pre-computed values). Mobile screens should load in <2 seconds on 3G connection.",
+    "security": "No authentication required (single-user app). Input validation on both client and server. Sanitize all user inputs to prevent XSS. MongoDB connection string stored in environment variables.",
+    "limits": "Max players per game: 20 (soft limit, UI design consideration). Max buy-in amount: 1,000,000 ILS. Max cashout amount: 1,000,000 ILS. Player name max length: 50 characters. Location max length: 100 characters. Discrepancy notes max length: 500 characters.",
+    "database": "MongoDB Atlas hosted. Use Mongoose ODM for schema validation and relationships. Enable timestamps (createdAt, updatedAt) on all collections. Use compound indexes for common query patterns (e.g., gameId + playerId)."
+  },
+
+  "open_questions": [
+    "Should there be a 'delete all data' function for testing/reset?",
+    "Should game duration be displayed in minutes/hours or just raw timestamps?",
+    "Should the app support PWA (Progressive Web App) for offline capability in future?",
+    "Should there be a bulk buy-in feature (add same amount for multiple players at once)?",
+    "Should player statistics show graphs/charts (e.g., P/L over time)?",
+    "Should there be a search/filter feature on game history (by date range, player, location)?",
+    "What happens if MongoDB connection fails during active game - should there be local state persistence?"
+  ],
+
+  "technical_stack": {
+    "frontend": {
+      "framework": "Next.js 14+ with App Router",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "state_management": "React Context API or Zustand (for game state during active sessions)",
+      "forms": "React Hook Form with Zod validation",
+      "ui_components": "Custom components with Tailwind, or shadcn/ui for base components"
+    },
+    "backend": {
+      "framework": "Next.js API Routes (App Router route handlers)",
+      "database": "MongoDB Atlas",
+      "odm": "Mongoose",
+      "validation": "Zod schemas (shared between client and server)"
+    },
+    "deployment": {
+      "platform": "Vercel (recommended for Next.js)",
+      "environment_variables": "MONGODB_URI stored in Vercel environment variables"
+    }
+  },
+
+  "ready_for": "system-architect"
+}
