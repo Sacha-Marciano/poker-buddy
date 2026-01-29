@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #ededed;
-  --neon-cyan: #00f0ff;
-  --neon-purple: #b625ff;
-  --neon-pink: #ff2e97;
-  --neon-blue: #4d7cff;
-  --neon-green: #00ff88;
+  --background: #1a1a1a;
+  --foreground: #e8e0d4;
+  --poker-green: #2d6b3f;
+  --poker-green-light: #3a8a52;
+  --poker-red: #c0392b;
+  --poker-gold: #d4a03c;
+  --surface: #242424;
+  --surface-alt: #2e2e2e;
+  --border: #3a3530;
+  --text-muted: #9a9088;
 }
 
 @theme inline {
@@ -18,63 +21,31 @@
 }
 
 body {
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a0a2e 50%, #0a0a0f 100%);
-  background-attachment: fixed;
+  background: #1a1a1a;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   min-height: 100vh;
 }
 
-/* Neon glow effect */
-.neon-glow {
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.8),
-               0 0 20px rgba(0, 240, 255, 0.6),
-               0 0 30px rgba(0, 240, 255, 0.4);
-}
-
-.neon-border {
-  border: 2px solid var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5),
-              inset 0 0 10px rgba(0, 240, 255, 0.2);
-}
-
+/* Subtle gradient for elevated sections */
 .gradient-bg {
-  background: linear-gradient(135deg, rgba(182, 37, 255, 0.1) 0%, rgba(0, 240, 255, 0.1) 100%);
-}
-
-/* Animated gradient */
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animated-gradient {
-  background: linear-gradient(270deg, #b625ff, #00f0ff, #ff2e97, #4d7cff);
-  background-size: 800% 800%;
-  animation: gradient-shift 8s ease infinite;
+  background: linear-gradient(135deg, rgba(45, 107, 63, 0.08) 0%, rgba(212, 160, 60, 0.05) 100%);
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(10, 10, 15, 0.5);
+  background: #1a1a1a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
-  border-radius: 4px;
+  background: #3a3530;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--neon-purple), var(--neon-cyan));
+  background: #4a4540;
 }

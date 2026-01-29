@@ -82,7 +82,7 @@ export default function PlayersPage() {
       <main className="p-4">
         {error && (
           <div className="mb-4">
-            <p className="text-red-600">Failed to load players: {error}</p>
+            <p className="text-[#c0392b]">Failed to load players: {error}</p>
           </div>
         )}
 
@@ -102,18 +102,18 @@ export default function PlayersPage() {
           <div className="space-y-3">
             {players.map((player) => (
               <Link key={player._id} href={`/players/${player._id}`}>
-                <Card className="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                <Card className="hover:bg-[#2e2e2e] transition-colors">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div
-                        className="w-8 h-8 rounded-full flex-shrink-0"
+                        className="w-8 h-8 rounded-full shrink-0"
                         style={{ backgroundColor: player.avatarColor || '#6B7280' }}
                       />
                       <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-white truncate">
+                      <h3 className="font-semibold text-[#e8e0d4] truncate">
                         {player.name}
                       </h3>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+                      <p className="text-sm text-[#9a9088] mt-1">
                         {player.totalGamesPlayed} game{player.totalGamesPlayed !== 1 ? 's' : ''}
                         {' • '}
                         {formatCurrency(player.totalBuyIns)} total buy-ins

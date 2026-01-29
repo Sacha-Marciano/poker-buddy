@@ -64,7 +64,7 @@ export function Modal({
       {/* Modal content */}
       <div
         className={cn(
-          'relative w-full bg-white dark:bg-zinc-800 rounded-t-2xl sm:rounded-2xl',
+          'relative w-full bg-[#242424] rounded-t-2xl sm:rounded-2xl',
           'max-h-[90vh] overflow-hidden flex flex-col',
           sizes[size]
         )}
@@ -73,16 +73,16 @@ export function Modal({
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-700">
+        <div className="flex items-center justify-between p-4 border-b border-[#3a3530]">
           <h2
             id="modal-title"
-            className="text-lg font-semibold text-zinc-900 dark:text-zinc-100"
+            className="text-lg font-semibold text-[#e8e0d4]"
           >
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700"
+            className="p-2 text-[#9a9088] hover:text-[#e8e0d4] rounded-lg hover:bg-[#2e2e2e]"
             aria-label="Close modal"
           >
             <svg
@@ -106,7 +106,7 @@ export function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="p-4 border-t border-zinc-200 dark:border-zinc-700">
+          <div className="p-4 border-t border-[#3a3530]">
             {footer}
           </div>
         )}

@@ -93,14 +93,14 @@ export function ParticipantCard({
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3 flex-1">
             <div
-              className="w-10 h-10 rounded-full flex-shrink-0"
+              className="w-10 h-10 rounded-full shrink-0"
               style={{ backgroundColor: participant.avatarColor || '#6B7280' }}
             />
             <div className="flex-1">
-            <h3 className="text-xl font-bold text-white">
+            <h3 className="text-xl font-bold text-[#e8e0d4]">
               {participant.playerName}
             </h3>
-            <div className="flex items-center gap-3 mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            <div className="flex items-center gap-3 mt-1 text-sm text-[#9a9088]">
               <span className={optimisticBuyIns > 0 ? 'opacity-60' : ''}>
                 {displayCount} buy-in{displayCount !== 1 ? 's' : ''}
               </span>
@@ -109,7 +109,7 @@ export function ParticipantCard({
                 {formatCurrency(displayTotal)}
               </span>
               {optimisticBuyIns > 0 && (
-                <span className="text-blue-600 dark:text-blue-400 text-xs">
+                <span className="text-[#d4a03c] text-xs">
                   Saving...
                 </span>
               )}
@@ -131,7 +131,7 @@ export function ParticipantCard({
 
         {/* Buy-In Controls - Only for Active Games */}
         {isGameActive && (
-          <div className="pt-4 border-t border-zinc-200 dark:border-zinc-700 space-y-3">
+          <div className="pt-4 border-t border-[#3a3530] space-y-3">
             {/* Quick Buy-In Buttons */}
             <div className="grid grid-cols-5 gap-2">
               {QUICK_AMOUNTS.map((amount) => (
@@ -139,10 +139,10 @@ export function ParticipantCard({
                   key={amount}
                   onClick={() => handleQuickBuyIn(amount)}
                   disabled={loadingButton !== null}
-                  className={`h-12 rounded-xl font-bold text-base transition-all duration-300 disabled:cursor-not-allowed relative border-2 ${
+                  className={`h-12 rounded-xl font-bold text-base transition-all duration-200 disabled:cursor-not-allowed relative border ${
                     amount === 50
-                      ? 'bg-[#00f0ff] text-black border-[#00f0ff]/50 hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105'
-                      : 'bg-zinc-900/60 text-[#00f0ff] border-[#00f0ff]/30 hover:border-[#00f0ff] hover:bg-zinc-800/80'
+                      ? 'bg-[#2d6b3f] text-white border-[#3a8a52]/50 hover:bg-[#3a8a52] hover:shadow-md'
+                      : 'bg-[#2e2e2e] text-[#e8e0d4] border-[#3a3530] hover:border-[#2d6b3f] hover:bg-[#3a3530]'
                   } ${loadingButton === amount ? 'opacity-60' : ''}`}
                 >
                   {loadingButton === amount ? (
@@ -167,20 +167,20 @@ export function ParticipantCard({
                 value={customAmount}
                 onChange={(e) => setCustomAmount(e.target.value)}
                 disabled={isSubmitting}
-                className="flex-1 h-10 px-3 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 disabled:opacity-50"
+                className="flex-1 h-10 px-3 rounded-lg border border-[#3a3530] bg-[#2e2e2e] text-[#e8e0d4] placeholder:text-[#9a9088] disabled:opacity-50"
                 min="1"
               />
               <button
                 onClick={handleCustomBuyIn}
                 disabled={isSubmitting || !customAmount}
-                className="h-10 px-4 rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-medium hover:bg-zinc-300 dark:hover:bg-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="h-10 px-4 rounded-lg bg-[#2e2e2e] text-[#e8e0d4] font-medium hover:bg-[#3a3530] border border-[#3a3530] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Add
               </button>
             </div>
 
             {error && (
-              <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+              <p className="text-[#c0392b] text-sm">{error}</p>
             )}
           </div>
         )}

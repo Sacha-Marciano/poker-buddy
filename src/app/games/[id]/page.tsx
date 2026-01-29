@@ -75,7 +75,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
       <div className="min-h-screen">
         <PageHeader title="Game Not Found" showBack />
         <div className="p-4">
-          <p className="text-red-600">{error || 'Game not found'}</p>
+          <p className="text-[#c0392b]">{error || 'Game not found'}</p>
         </div>
       </div>
     );
@@ -95,7 +95,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         {/* Game Status */}
         <Card>
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-zinc-100 flex items-center gap-2">
+            <h3 className="font-semibold text-[#e8e0d4] flex items-center gap-2">
               <span>🎯</span> Status
             </h3>
             <Badge variant={isGameActive ? 'success' : 'default'}>
@@ -107,7 +107,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
         {/* Participants */}
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
-            <h2 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-[#e8e0d4] flex items-center gap-2">
               <span>👥</span> Players ({game.participants.length})
             </h2>
             {isGameActive && (
@@ -154,7 +154,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
             <span>💰</span> Total Buy-Ins
           </CardTitle>
           <div className="text-center">
-            <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+            <p className="text-3xl font-bold text-[#e8e0d4]">
               {formatCurrency(game.totalBuyIns)}
             </p>
           </div>
@@ -180,16 +180,16 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
             </CardTitle>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-zinc-600 dark:text-zinc-400">Total Buy-ins</span>
+                <span className="text-[#9a9088]">Total Buy-ins</span>
                 <span className="font-semibold">{formatCurrency(game.totalBuyIns)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-zinc-600 dark:text-zinc-400">Total Cashouts</span>
+                <span className="text-[#9a9088]">Total Cashouts</span>
                 <span className="font-semibold">{formatCurrency(game.totalCashouts)}</span>
               </div>
-              <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
+              <div className="h-px bg-[#3a3530]" />
               <div className="flex justify-between items-center">
-                <span className="text-zinc-900 dark:text-zinc-100 font-semibold">Difference</span>
+                <span className="text-[#e8e0d4] font-semibold">Difference</span>
                 <div className="flex items-center gap-2">
                   <span className={`font-semibold ${getProfitLossColor(game.balanceDiscrepancy)}`}>
                     {formatProfitLoss(game.balanceDiscrepancy)}
@@ -222,27 +222,27 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
               {game.settlements.map((settlement) => (
                 <div
                   key={settlement._id}
-                  className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20"
+                  className="p-3 rounded-lg bg-[#2d6b3f]/10 border border-[#2d6b3f]/20"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-[#e8e0d4]">
                         {settlement.fromPlayerName}
                       </p>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                      <p className="text-xs text-[#9a9088]">
                         pays
                       </p>
                     </div>
                     <div className="px-4">
-                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                      <p className="text-lg font-bold text-[#d4a03c]">
                         {formatCurrency(settlement.amount)}
                       </p>
                     </div>
                     <div className="flex-1 text-right">
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                      <p className="text-xs text-[#9a9088]">
                         to
                       </p>
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-[#e8e0d4]">
                         {settlement.toPlayerName}
                       </p>
                     </div>
@@ -267,13 +267,13 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
                 <div key={tx._id} className="flex justify-between items-center text-sm">
                   <div>
                     <span className="font-medium">{tx.playerName}</span>
-                    <span className="text-zinc-500 mx-2">•</span>
-                    <span className="text-zinc-600 dark:text-zinc-400">
+                    <span className="text-[#9a9088] mx-2">•</span>
+                    <span className="text-[#9a9088]">
                       {format(new Date(tx.timestamp), 'h:mm a')}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={tx.type === 'BUY_IN' ? 'text-red-600' : 'text-green-600'}>
+                    <span className={tx.type === 'BUY_IN' ? 'text-[#c0392b]' : 'text-[#27ae60]'}>
                       {tx.type === 'BUY_IN' ? '-' : '+'}
                       {formatCurrency(tx.amount)}
                     </span>

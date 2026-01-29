@@ -14,9 +14,9 @@ export function Card({
   ...props
 }: CardProps) {
   const variants = {
-    default: 'bg-zinc-900/60 backdrop-blur-sm border border-[#00f0ff]/20',
-    elevated: 'bg-zinc-900/70 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.15)] border border-[#00f0ff]/30',
-    outlined: 'bg-zinc-900/50 backdrop-blur-sm border-2 border-[#00f0ff]/40 shadow-[0_0_15px_rgba(0,240,255,0.1)]',
+    default: 'bg-[#242424] border border-[#3a3530]',
+    elevated: 'bg-[#2e2e2e] shadow-md border border-[#3a3530]',
+    outlined: 'bg-[#242424] border border-[#3a3530]',
   };
 
   const paddings = {
@@ -60,7 +60,7 @@ export function CardTitle({
 }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-lg font-bold text-[#00f0ff]', className)}
+      className={cn('text-lg font-bold text-[#d4a03c]', className)}
       {...props}
     >
       {children}

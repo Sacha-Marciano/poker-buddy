@@ -126,8 +126,8 @@ export function AddParticipantModal({
       }
     >
       {error && (
-        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+        <div className="mb-4 p-3 bg-[#c0392b]/10 border border-[#c0392b]/20 rounded-lg">
+          <p className="text-[#c0392b] text-sm">{error}</p>
         </div>
       )}
 
@@ -147,7 +147,7 @@ export function AddParticipantModal({
           {loadingPlayers ? (
             <div className="space-y-2">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                <div key={i} className="p-3 border border-[#3a3530] rounded-lg">
                   <Skeleton className="h-5 w-32 mb-2" />
                   <Skeleton className="h-4 w-24" />
                 </div>
@@ -161,18 +161,18 @@ export function AddParticipantModal({
                     key={player._id}
                     onClick={() => handleAddExistingPlayer(player._id)}
                     disabled={isSubmitting}
-                    className="w-full text-left p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full text-left p-3 rounded-lg border border-[#3a3530] hover:bg-[#2e2e2e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-8 h-8 rounded-full flex-shrink-0"
+                        className="w-8 h-8 rounded-full shrink-0"
                         style={{ backgroundColor: player.avatarColor || '#6B7280' }}
                       />
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-[#e8e0d4]">
                           {player.name}
                         </p>
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        <p className="text-sm text-[#9a9088]">
                           {player.totalGamesPlayed} game
                           {player.totalGamesPlayed !== 1 ? 's' : ''}
                         </p>
@@ -182,7 +182,7 @@ export function AddParticipantModal({
                 ))}
               </div>
 
-              <div className="pt-3 border-t border-zinc-200 dark:border-zinc-700">
+              <div className="pt-3 border-t border-[#3a3530]">
                 <Button
                   variant="secondary"
                   onClick={() => setShowNewPlayerForm(true)}
@@ -194,7 +194,7 @@ export function AddParticipantModal({
             </>
           ) : (
             <div className="text-center py-8">
-              <p className="text-zinc-600 dark:text-zinc-400 mb-4">
+              <p className="text-[#9a9088] mb-4">
                 All players have been added to this game
               </p>
               <Button

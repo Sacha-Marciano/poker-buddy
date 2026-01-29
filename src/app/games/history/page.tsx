@@ -13,7 +13,7 @@ export default function GameHistoryPage() {
         <PageHeader title="Game History" showBack />
         <main className="p-4">
           <Card variant="outlined" padding="none">
-            <div className="p-4 border-b border-zinc-200 dark:border-zinc-700">
+            <div className="p-4 border-b border-[#3a3530]">
               <CardTitle>Completed Games</CardTitle>
             </div>
             <div className="p-4 space-y-3">
@@ -37,7 +37,7 @@ export default function GameHistoryPage() {
       <main className="p-4">
         {error && (
           <div className="mb-4">
-            <p className="text-red-600">Failed to load games: {error}</p>
+            <p className="text-[#c0392b]">Failed to load games: {error}</p>
           </div>
         )}
 
@@ -50,10 +50,10 @@ export default function GameHistoryPage() {
 
         {!error && games && games.length > 0 && (
           <Card variant="outlined" padding="none">
-            <div className="p-4 border-b border-zinc-200 dark:border-zinc-700">
+            <div className="p-4 border-b border-[#3a3530]">
               <CardTitle>Completed Games ({games.length})</CardTitle>
             </div>
-            <div className="divide-y divide-zinc-200 dark:divide-zinc-700">
+            <div className="divide-y divide-[#3a3530]">
               {games.map((game) => (
                 <div key={game._id} className="p-4">
                   <GameCard game={game} />

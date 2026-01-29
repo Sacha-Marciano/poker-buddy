@@ -33,7 +33,7 @@ Add four new fields (`Player.phone`, `Player.avatarColor`, `BuyIn.isRebuy`, `Cas
 #### Files to Modify
 
 | File                    | Changes                                          |
-|-------------------------|--------------------------------------------------|
+| ----------------------- | ------------------------------------------------ |
 | `src/models/Player.ts`  | Add `phone` and `avatarColor` fields + interface |
 | `src/models/BuyIn.ts`   | Add `isRebuy` field + interface                  |
 | `src/models/Cashout.ts` | Add `finalChips` field + interface               |
@@ -41,6 +41,7 @@ Add four new fields (`Player.phone`, `Player.avatarColor`, `BuyIn.isRebuy`, `Cas
 #### Player.ts Changes
 
 Add to `IPlayer` interface:
+
 ```typescript
 export interface IPlayer {
   name: string;
@@ -53,6 +54,7 @@ export interface IPlayer {
 ```
 
 Add to playerSchema fields (after `isDeleted`):
+
 ```typescript
 phone: {
   type: String,
@@ -76,6 +78,7 @@ avatarColor: {
 #### BuyIn.ts Changes
 
 Add to `IBuyIn` interface:
+
 ```typescript
 export interface IBuyIn {
   gameParticipantId: Types.ObjectId;
@@ -87,6 +90,7 @@ export interface IBuyIn {
 ```
 
 Add to buyInSchema fields (after `amount`):
+
 ```typescript
 isRebuy: {
   type: Boolean,
@@ -98,6 +102,7 @@ isRebuy: {
 #### Cashout.ts Changes
 
 Add to `ICashout` interface:
+
 ```typescript
 export interface ICashout {
   gameParticipantId: Types.ObjectId;
@@ -109,6 +114,7 @@ export interface ICashout {
 ```
 
 Add to cashoutSchema fields (after `amount`):
+
 ```typescript
 finalChips: {
   type: Number,
@@ -128,10 +134,10 @@ finalChips: {
 
 #### Files to Modify
 
-| File                       | Changes                                            |
-|----------------------------|----------------------------------------------------|
-| `src/schemas/player.ts`    | Add phone and avatarColor to create/update schemas |
-| `src/schemas/transaction.ts` | Add isRebuy to buy-in, finalChips to cashout     |
+| File                         | Changes                                            |
+| ---------------------------- | -------------------------------------------------- |
+| `src/schemas/player.ts`      | Add phone and avatarColor to create/update schemas |
+| `src/schemas/transaction.ts` | Add isRebuy to buy-in, finalChips to cashout       |
 
 #### player.ts Changes
 
@@ -139,48 +145,49 @@ finalChips: {
 export const createPlayerSchema = z.object({
   name: z
     .string()
-    .min(1, 'Name is required')
-    .max(50, 'Name cannot exceed 50 characters')
+    .min(1, "Name is required")
+    .max(50, "Name cannot exceed 50 characters")
     .trim(),
   phone: z
     .string()
-    .max(20, 'Phone number cannot exceed 20 characters')
+    .max(20, "Phone number cannot exceed 20 characters")
     .trim()
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
   avatarColor: z
     .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color (e.g., #FF6B6B)')
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color (e.g., #FF6B6B)")
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
 });
 
 export const updatePlayerSchema = z.object({
   name: z
     .string()
-    .min(1, 'Name is required')
-    .max(50, 'Name cannot exceed 50 characters')
+    .min(1, "Name is required")
+    .max(50, "Name cannot exceed 50 characters")
     .trim(),
   phone: z
     .string()
-    .max(20, 'Phone number cannot exceed 20 characters')
+    .max(20, "Phone number cannot exceed 20 characters")
     .trim()
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
   avatarColor: z
     .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color (e.g., #FF6B6B)')
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid hex color (e.g., #FF6B6B)")
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
 });
 ```
 
 #### transaction.ts Changes
 
 Add `isRebuy` to `createBuyInSchema`:
+
 ```typescript
 export const createBuyInSchema = z.object({
-  gameParticipantId: z.string().min(1, 'Game participant ID is required'),
+  gameParticipantId: z.string().min(1, "Game participant ID is required"),
   amount: amountSchema,
   isRebuy: z.boolean().optional().default(false),
   timestamp: z.string().datetime().optional(),
@@ -188,15 +195,16 @@ export const createBuyInSchema = z.object({
 ```
 
 Add `finalChips` to `cashoutItemSchema`:
+
 ```typescript
 const cashoutItemSchema = z.object({
-  gameParticipantId: z.string().min(1, 'Game participant ID is required'),
+  gameParticipantId: z.string().min(1, "Game participant ID is required"),
   amount: cashoutAmountSchema,
   finalChips: z
     .number()
-    .int('Final chips must be a whole number')
-    .min(0, 'Final chips cannot be negative')
-    .max(1000000, 'Final chips cannot exceed 1,000,000')
+    .int("Final chips must be a whole number")
+    .min(0, "Final chips cannot be negative")
+    .max(1000000, "Final chips cannot exceed 1,000,000")
     .optional(),
 });
 ```
@@ -205,12 +213,12 @@ const cashoutItemSchema = z.object({
 
 #### Files to Modify
 
-| File                      | Changes                                           |
-|---------------------------|----------------------------------------------------|
-| `src/types/player.ts`     | Add phone, avatarColor to Player and PlayerWithStats |
-| `src/types/transaction.ts` | Add isRebuy to BuyIn, finalChips to Cashout       |
-| `src/types/api.ts`        | Add new fields to request types                    |
-| `src/types/game.ts`       | Add isRebuy to GameTransaction                     |
+| File                       | Changes                                              |
+| -------------------------- | ---------------------------------------------------- |
+| `src/types/player.ts`      | Add phone, avatarColor to Player and PlayerWithStats |
+| `src/types/transaction.ts` | Add isRebuy to BuyIn, finalChips to Cashout          |
+| `src/types/api.ts`         | Add new fields to request types                      |
+| `src/types/game.ts`        | Add isRebuy to GameTransaction                       |
 
 #### player.ts Changes
 
@@ -238,6 +246,7 @@ export interface PlayerWithStats {
 ```
 
 Also add `phone` and `avatarColor` to `PlayerDetail`:
+
 ```typescript
 export interface PlayerDetail {
   _id: string;
@@ -250,6 +259,7 @@ export interface PlayerDetail {
 ```
 
 Also add `avatarColor` to `LeaderboardEntry`:
+
 ```typescript
 export interface LeaderboardEntry {
   playerId: string;
@@ -326,6 +336,7 @@ export interface CompleteGameRequest {
 #### game.ts Changes
 
 Add `isRebuy` to `GameTransaction`:
+
 ```typescript
 export interface GameTransaction {
   _id: string;
@@ -334,11 +345,12 @@ export interface GameTransaction {
   amount: number;
   isRebuy?: boolean;
   timestamp: string;
-  type: 'BUY_IN' | 'CASHOUT';
+  type: "BUY_IN" | "CASHOUT";
 }
 ```
 
 Add `avatarColor` to `GameParticipant`:
+
 ```typescript
 export interface GameParticipant {
   _id: string;
@@ -358,19 +370,20 @@ export interface GameParticipant {
 
 #### Files to Modify
 
-| File                                           | Changes                                              |
-|------------------------------------------------|------------------------------------------------------|
-| `src/app/api/players/route.ts`                 | Accept phone/avatarColor in POST; include in GET projection |
-| `src/app/api/players/[id]/route.ts`            | Accept phone/avatarColor in PATCH; include in GET response  |
-| `src/app/api/buy-ins/route.ts`                 | Accept isRebuy in POST                               |
-| `src/app/api/cashouts/route.ts`                | Accept finalChips in POST                             |
-| `src/app/api/games/[id]/complete/route.ts`     | Accept finalChips in cashout items                    |
-| `src/app/api/games/[id]/route.ts`              | Include avatarColor in participant projection; isRebuy in buy-in transactions |
-| `src/app/api/leaderboard/route.ts`             | Include avatarColor in leaderboard projection         |
+| File                                       | Changes                                                                       |
+| ------------------------------------------ | ----------------------------------------------------------------------------- |
+| `src/app/api/players/route.ts`             | Accept phone/avatarColor in POST; include in GET projection                   |
+| `src/app/api/players/[id]/route.ts`        | Accept phone/avatarColor in PATCH; include in GET response                    |
+| `src/app/api/buy-ins/route.ts`             | Accept isRebuy in POST                                                        |
+| `src/app/api/cashouts/route.ts`            | Accept finalChips in POST                                                     |
+| `src/app/api/games/[id]/complete/route.ts` | Accept finalChips in cashout items                                            |
+| `src/app/api/games/[id]/route.ts`          | Include avatarColor in participant projection; isRebuy in buy-in transactions |
+| `src/app/api/leaderboard/route.ts`         | Include avatarColor in leaderboard projection                                 |
 
 #### Players GET (route.ts) - Aggregation projection update
 
 Add to the `$project` stage:
+
 ```javascript
 phone: 1,
 avatarColor: 1,
@@ -379,15 +392,21 @@ avatarColor: 1,
 #### Players POST (route.ts) - Schema and create update
 
 Update inline schema:
+
 ```typescript
 const createPlayerSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50, 'Name too long').trim(),
-  phone: z.string().max(20).trim().optional().or(z.literal('')),
-  avatarColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().or(z.literal('')),
+  name: z.string().min(1, "Name is required").max(50, "Name too long").trim(),
+  phone: z.string().max(20).trim().optional().or(z.literal("")),
+  avatarColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional()
+    .or(z.literal("")),
 });
 ```
 
 Update create call:
+
 ```typescript
 const player = await Player.create({
   name,
@@ -399,6 +418,7 @@ const player = await Player.create({
 #### Players [id] GET - Response update
 
 Add `phone` and `avatarColor` to the response:
+
 ```typescript
 return successResponse({
   _id: player._id,
@@ -413,11 +433,16 @@ return successResponse({
 #### Players [id] PATCH - Accept new fields
 
 Update inline schema and save logic:
+
 ```typescript
 const updatePlayerSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50, 'Name too long').trim(),
-  phone: z.string().max(20).trim().optional().or(z.literal('')),
-  avatarColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().or(z.literal('')),
+  name: z.string().min(1, "Name is required").max(50, "Name too long").trim(),
+  phone: z.string().max(20).trim().optional().or(z.literal("")),
+  avatarColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional()
+    .or(z.literal("")),
 });
 
 // In handler:
@@ -431,9 +456,10 @@ await player.save();
 #### Buy-ins POST - Accept isRebuy
 
 Update inline schema:
+
 ```typescript
 const createBuyInSchema = z.object({
-  gameParticipantId: z.string().min(1, 'Game participant ID is required'),
+  gameParticipantId: z.string().min(1, "Game participant ID is required"),
   amount: z.number().int().min(1).max(1000000),
   isRebuy: z.boolean().optional().default(false),
   timestamp: z.string().datetime().optional(),
@@ -441,6 +467,7 @@ const createBuyInSchema = z.object({
 ```
 
 Update create call:
+
 ```typescript
 const buyIn = await BuyIn.create({
   gameParticipantId: data.gameParticipantId,
@@ -453,6 +480,7 @@ const buyIn = await BuyIn.create({
 #### Cashouts POST - Accept finalChips
 
 Update inline `cashoutItemSchema`:
+
 ```typescript
 const cashoutItemSchema = z.object({
   gameParticipantId: z.string().min(1),
@@ -462,6 +490,7 @@ const cashoutItemSchema = z.object({
 ```
 
 Update insertMany map:
+
 ```typescript
 const createdCashouts = await Cashout.insertMany(
   data.cashouts.map((c) => ({
@@ -469,13 +498,14 @@ const createdCashouts = await Cashout.insertMany(
     amount: c.amount,
     finalChips: c.finalChips,
     timestamp: now,
-  }))
+  })),
 );
 ```
 
 #### Games [id] complete - Accept finalChips
 
 Same `cashoutItemSchema` update as cashouts route. Update the Cashout.insertMany call to include `finalChips`:
+
 ```typescript
 await Cashout.insertMany(
   data.cashouts.map((c) => ({
@@ -483,18 +513,20 @@ await Cashout.insertMany(
     amount: c.amount,
     finalChips: c.finalChips,
     timestamp: now,
-  }))
+  })),
 );
 ```
 
 #### Games [id] GET - Include new fields in projections
 
 In the participants aggregation, add `avatarColor` to the `$project`:
+
 ```javascript
 avatarColor: '$player.avatarColor',
 ```
 
 In the buyIns aggregation, add `isRebuy` to the `$project`:
+
 ```javascript
 isRebuy: 1,
 ```
@@ -507,9 +539,9 @@ Read the leaderboard route and add `avatarColor` to the aggregation projection. 
 
 #### File to Modify
 
-| File               | Changes                                   |
-|--------------------|-------------------------------------------|
-| `src/lib/api.ts`   | Type imports already pull from types/*.ts  |
+| File             | Changes                                    |
+| ---------------- | ------------------------------------------ |
+| `src/lib/api.ts` | Type imports already pull from types/\*.ts |
 
 No changes needed to `src/lib/api.ts` itself -- it already uses the TypeScript types from `src/types/api.ts` which will be updated. The function signatures accept the full request types, so adding optional fields to those types is sufficient.
 
@@ -517,23 +549,26 @@ No changes needed to `src/lib/api.ts` itself -- it already uses the TypeScript t
 
 #### Files to Modify
 
-| File                                              | Changes                                              |
-|---------------------------------------------------|------------------------------------------------------|
-| `src/app/players/page.tsx`                        | Show avatar color circle next to player name         |
-| `src/app/leaderboard/page.tsx`                    | Use avatar color for rank circle                     |
-| `src/app/games/[id]/page.tsx`                     | Show rebuy badge in transaction list                 |
-| `src/components/game/ParticipantCard.tsx`         | Show avatar color circle next to player name         |
-| `src/components/game/AddParticipantModal.tsx`     | Show avatar color circle in player list              |
+| File                                          | Changes                                      |
+| --------------------------------------------- | -------------------------------------------- |
+| `src/app/players/page.tsx`                    | Show avatar color circle next to player name |
+| `src/app/leaderboard/page.tsx`                | Use avatar color for rank circle             |
+| `src/app/games/[id]/page.tsx`                 | Show rebuy badge in transaction list         |
+| `src/components/game/ParticipantCard.tsx`     | Show avatar color circle next to player name |
+| `src/components/game/AddParticipantModal.tsx` | Show avatar color circle in player list      |
 
 #### Avatar Color Display Pattern
 
 Use a consistent avatar circle component pattern wherever player names appear:
+
 ```tsx
-{/* Avatar Color Circle */}
+{
+  /* Avatar Color Circle */
+}
 <div
-  className="w-8 h-8 rounded-full flex-shrink-0"
-  style={{ backgroundColor: player.avatarColor || '#6B7280' }}
-/>
+  className="w-8 h-8 rounded-full shrink-0"
+  style={{ backgroundColor: player.avatarColor || "#6B7280" }}
+/>;
 ```
 
 The default color `#6B7280` (zinc-500) is used when no avatarColor is set.
@@ -541,16 +576,15 @@ The default color `#6B7280` (zinc-500) is used when no avatarColor is set.
 #### Players Page (`src/app/players/page.tsx`)
 
 Add avatar color circle before player name in the player list cards:
+
 ```tsx
 <div className="flex items-center gap-3">
   <div
-    className="w-8 h-8 rounded-full flex-shrink-0"
-    style={{ backgroundColor: player.avatarColor || '#6B7280' }}
+    className="w-8 h-8 rounded-full shrink-0"
+    style={{ backgroundColor: player.avatarColor || "#6B7280" }}
   />
   <div className="flex-1 min-w-0">
-    <h3 className="font-semibold text-white truncate">
-      {player.name}
-    </h3>
+    <h3 className="font-semibold text-white truncate">{player.name}</h3>
     {/* existing stats line */}
   </div>
 </div>
@@ -559,10 +593,11 @@ Add avatar color circle before player name in the player list cards:
 #### Leaderboard Page (`src/app/leaderboard/page.tsx`)
 
 Replace the rank circle with avatar-colored circle (keeping rank number inside):
+
 ```tsx
 <div
   className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg text-white"
-  style={{ backgroundColor: entry.avatarColor || '#6B7280' }}
+  style={{ backgroundColor: entry.avatarColor || "#6B7280" }}
 >
   {index + 1}
 </div>
@@ -571,16 +606,15 @@ Replace the rank circle with avatar-colored circle (keeping rank number inside):
 #### ParticipantCard (`src/components/game/ParticipantCard.tsx`)
 
 Add avatar color circle before participant name. The component receives `GameParticipant` which will have `avatarColor`:
+
 ```tsx
 <div className="flex items-center gap-3">
   <div
-    className="w-10 h-10 rounded-full flex-shrink-0"
-    style={{ backgroundColor: participant.avatarColor || '#6B7280' }}
+    className="w-10 h-10 rounded-full shrink-0"
+    style={{ backgroundColor: participant.avatarColor || "#6B7280" }}
   />
   <div className="flex-1">
-    <h3 className="text-xl font-bold text-white">
-      {participant.playerName}
-    </h3>
+    <h3 className="text-xl font-bold text-white">{participant.playerName}</h3>
     {/* existing stats line */}
   </div>
 </div>
@@ -589,20 +623,22 @@ Add avatar color circle before participant name. The component receives `GamePar
 #### Game Detail Page - Transaction List (`src/app/games/[id]/page.tsx`)
 
 Add a "Rebuy" badge next to buy-in transactions when `isRebuy` is true:
+
 ```tsx
-<Badge variant={tx.type === 'BUY_IN' ? 'danger' : 'success'} size="sm">
-  {tx.type === 'BUY_IN' ? (tx.isRebuy ? 'Rebuy' : 'Buy-in') : 'Cashout'}
+<Badge variant={tx.type === "BUY_IN" ? "danger" : "success"} size="sm">
+  {tx.type === "BUY_IN" ? (tx.isRebuy ? "Rebuy" : "Buy-in") : "Cashout"}
 </Badge>
 ```
 
 #### AddParticipantModal (`src/components/game/AddParticipantModal.tsx`)
 
 Add avatar color circle in the available players list:
+
 ```tsx
 <div className="flex items-center gap-3">
   <div
-    className="w-8 h-8 rounded-full flex-shrink-0"
-    style={{ backgroundColor: player.avatarColor || '#6B7280' }}
+    className="w-8 h-8 rounded-full shrink-0"
+    style={{ backgroundColor: player.avatarColor || "#6B7280" }}
   />
   <div>
     <p className="font-medium text-white">{player.name}</p>
@@ -617,16 +653,17 @@ Add avatar color circle in the available players list:
 
 ## Error Handling
 
-| Error Condition                      | Expected Behavior                     | User Feedback              |
-|--------------------------------------|---------------------------------------|----------------------------|
-| Invalid hex color format             | Zod/Mongoose validation rejects       | Form error message         |
-| Phone number too long                | Zod/Mongoose validation rejects       | Form error message         |
-| Missing optional fields              | Treated as undefined, no error        | None needed                |
-| Old data without new fields          | Fields remain undefined, app works    | None needed                |
+| Error Condition             | Expected Behavior                  | User Feedback      |
+| --------------------------- | ---------------------------------- | ------------------ |
+| Invalid hex color format    | Zod/Mongoose validation rejects    | Form error message |
+| Phone number too long       | Zod/Mongoose validation rejects    | Form error message |
+| Missing optional fields     | Treated as undefined, no error     | None needed        |
+| Old data without new fields | Fields remain undefined, app works | None needed        |
 
 ## Expected Results
 
 When this phase is complete:
+
 1. Player documents can store `phone` and `avatarColor`
 2. BuyIn documents can store `isRebuy` (defaults to `false`)
 3. Cashout documents can store `finalChips`
@@ -666,17 +703,19 @@ When this phase is complete:
 
 ## Potential Issues
 
-| Issue                                          | Detection                | Resolution                                        |
-|------------------------------------------------|--------------------------|---------------------------------------------------|
-| Inline Zod schemas in API routes vs shared schemas | Code review            | API routes define their own inline Zod schemas -- update both inline and shared |
-| Aggregation pipelines missing new fields       | Fields not in API response | Add fields to `$project` stages in all relevant aggregations |
-| avatarColor not propagated through game detail  | Missing on ParticipantCard | Must add to game detail aggregation `$project` via player lookup |
-| Leaderboard aggregation missing avatarColor    | Missing on leaderboard   | Add `avatarColor: 1` to the `$project` stage in leaderboard route (it already has access to Player fields via the `$match` on players collection) |
+| Issue                                              | Detection                  | Resolution                                                                                                                                        |
+| -------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Inline Zod schemas in API routes vs shared schemas | Code review                | API routes define their own inline Zod schemas -- update both inline and shared                                                                   |
+| Aggregation pipelines missing new fields           | Fields not in API response | Add fields to `$project` stages in all relevant aggregations                                                                                      |
+| avatarColor not propagated through game detail     | Missing on ParticipantCard | Must add to game detail aggregation `$project` via player lookup                                                                                  |
+| Leaderboard aggregation missing avatarColor        | Missing on leaderboard     | Add `avatarColor: 1` to the `$project` stage in leaderboard route (it already has access to Player fields via the `$match` on players collection) |
 
 ### Leaderboard Route Specifics
 
 The leaderboard route (`src/app/api/leaderboard/route.ts`) aggregates directly from the Player collection. The `$project` stage should add:
+
 ```javascript
 avatarColor: 1,
 ```
+
 This works because the aggregation starts from `Player` documents, which will have the new `avatarColor` field.

@@ -24,17 +24,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-bold rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider';
+      'inline-flex items-center justify-center font-bold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider';
 
     const variants = {
       primary:
-        'bg-[#00f0ff] text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.6)] hover:scale-105 focus:ring-[#00f0ff] border-2 border-[#00f0ff]/50',
+        'bg-[#2d6b3f] text-white hover:bg-[#3a8a52] hover:shadow-md focus:ring-[#2d6b3f] border border-[#3a8a52]/30',
       secondary:
-        'bg-zinc-900/80 text-[#00f0ff] hover:bg-zinc-800 focus:ring-[#00f0ff] border-2 border-[#00f0ff]/30 hover:border-[#00f0ff] hover:shadow-[0_0_15px_rgba(0,240,255,0.4)]',
+        'bg-[#2e2e2e] text-[#e8e0d4] hover:bg-[#3a3530] focus:ring-[#2d6b3f] border border-[#3a3530] hover:border-[#2d6b3f]',
       danger:
-        'bg-[#ff2e97] text-white hover:shadow-[0_0_20px_rgba(255,46,151,0.6)] hover:scale-105 focus:ring-[#ff2e97] border-2 border-[#ff2e97]/50',
+        'bg-[#c0392b] text-white hover:bg-[#a93226] hover:shadow-md focus:ring-[#c0392b] border border-[#c0392b]/50',
       ghost:
-        'bg-transparent text-[#00f0ff] hover:bg-[#00f0ff]/10 focus:ring-[#00f0ff] border-2 border-transparent hover:border-[#00f0ff]/30',
+        'bg-transparent text-[#3a8a52] hover:bg-[#2d6b3f]/10 focus:ring-[#2d6b3f] border border-transparent hover:border-[#2d6b3f]/30',
     };
 
     const sizes = {

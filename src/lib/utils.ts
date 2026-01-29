@@ -39,9 +39,9 @@ export function formatProfitLoss(amount: number): string {
  * @returns Tailwind color class
  */
 export function getProfitLossColor(amount: number): string {
-  if (amount > 0) return 'text-green-600';
-  if (amount < 0) return 'text-red-600';
-  return 'text-zinc-600';
+  if (amount > 0) return 'text-[#27ae60]';
+  if (amount < 0) return 'text-[#c0392b]';
+  return 'text-[#9a9088]';
 }
 
 /**
@@ -60,8 +60,8 @@ export function getBalanceStatus(discrepancy: number): 'GREEN' | 'YELLOW' | 'RED
  */
 export function getBalanceStatusColor(status: 'GREEN' | 'YELLOW' | 'RED'): string {
   switch (status) {
-    case 'GREEN': return 'text-green-600 bg-green-100';
-    case 'YELLOW': return 'text-yellow-600 bg-yellow-100';
-    case 'RED': return 'text-red-600 bg-red-100';
+    case 'GREEN': return 'text-[#27ae60] bg-[#27ae60]/10';
+    case 'YELLOW': return 'text-[#d4a03c] bg-[#d4a03c]/10';
+    case 'RED': return 'text-[#c0392b] bg-[#c0392b]/10';
   }
 }

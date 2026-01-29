@@ -23,7 +23,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1"
+            className="block text-sm font-medium text-[#e8e0d4] mb-1"
           >
             {label}
           </label>
@@ -33,12 +33,12 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           id={selectId}
           className={cn(
             'w-full h-12 px-4 text-base rounded-lg border transition-colors',
-            'bg-white dark:bg-zinc-800',
-            'text-zinc-900 dark:text-zinc-100',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+            'bg-[#2e2e2e]',
+            'text-[#e8e0d4]',
+            'focus:outline-none focus:ring-2 focus:ring-[#2d6b3f] focus:border-transparent',
             error
-              ? 'border-red-500 focus:ring-red-500'
-              : 'border-zinc-300 dark:border-zinc-600',
+              ? 'border-[#c0392b] focus:ring-[#c0392b]'
+              : 'border-[#3a3530]',
             className
           )}
           {...props}
@@ -54,7 +54,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-sm text-[#c0392b]">{error}</p>}
       </div>
     );
   }

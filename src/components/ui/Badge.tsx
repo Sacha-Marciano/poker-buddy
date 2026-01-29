@@ -14,11 +14,11 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variants = {
-    default: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
-    success: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-    warning: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-    danger: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-    info: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    default: 'bg-[#2e2e2e] text-[#9a9088]',
+    success: 'bg-[#27ae60]/15 text-[#27ae60]',
+    warning: 'bg-[#d4a03c]/15 text-[#d4a03c]',
+    danger: 'bg-[#c0392b]/15 text-[#c0392b]',
+    info: 'bg-[#2d6b3f]/15 text-[#3a8a52]',
   };
 
   const sizes = {

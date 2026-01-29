@@ -65,7 +65,7 @@ export default function CreateGamePage() {
 
   return (
     <div className="min-h-screen pb-24">
-      <PageHeader title="🎮 Create New Game" />
+      <PageHeader title="New Game" />
 
       <main className="p-4 space-y-6">
         {/* Create Game Form */}
@@ -98,7 +98,7 @@ export default function CreateGamePage() {
                 />
 
                 {error && (
-                  <p className="text-red-600 text-sm">{error}</p>
+                  <p className="text-[#c0392b] text-sm">{error}</p>
                 )}
 
                 <div className="pt-4">
@@ -119,7 +119,7 @@ export default function CreateGamePage() {
         {/* Active Games */}
         <section>
           <Card variant="outlined" padding="none">
-            <div className="p-4 border-b border-zinc-200 dark:border-zinc-700">
+            <div className="p-4 border-b border-[#3a3530]">
               <CardTitle>Active Games</CardTitle>
             </div>
 
@@ -132,7 +132,7 @@ export default function CreateGamePage() {
 
             {gamesError && (
               <div className="p-4">
-                <p className="text-red-600">Failed to load games: {gamesError}</p>
+                <p className="text-[#c0392b]">Failed to load games: {gamesError}</p>
               </div>
             )}
 
@@ -146,7 +146,7 @@ export default function CreateGamePage() {
             )}
 
             {!gamesLoading && !gamesError && activeGames && activeGames.length > 0 && (
-              <div className="divide-y divide-zinc-200 dark:divide-zinc-700">
+              <div className="divide-y divide-[#3a3530]">
                 {activeGames.map((game) => (
                   <div key={game._id} className="p-4">
                     <GameCard game={game} />

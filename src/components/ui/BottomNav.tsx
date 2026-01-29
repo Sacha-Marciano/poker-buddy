@@ -80,7 +80,7 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-xl border-t-2 border-[#00f0ff]/30 safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#1a1a1a]/95 backdrop-blur-xl border-t border-[#3a3530] safe-area-inset-bottom">
       <div className="flex items-center justify-around h-20">
         {navItems.map((item) => {
           const active = isActive(item.href);
@@ -91,22 +91,22 @@ export function BottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center w-full h-full gap-1.5 transition-all duration-300 relative',
                 active
-                  ? 'text-[#00f0ff]'
-                  : 'text-zinc-400 hover:text-[#b625ff]'
+                  ? 'text-[#3a8a52]'
+                  : 'text-[#9a9088] hover:text-[#e8e0d4]'
               )}
             >
               {active && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#00f0ff] rounded-full shadow-[0_0_10px_rgba(0,240,255,0.8)]" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-[#2d6b3f] rounded-full" />
               )}
               <div className={cn(
                 "transition-all duration-300",
-                active ? "scale-110 drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" : "scale-100"
+                active ? "scale-110" : "scale-100"
               )}>
                 {item.icon}
               </div>
               <span className={cn(
                 "text-xs font-bold tracking-wide uppercase",
-                active && "neon-glow"
+                active && "font-extrabold"
               )}>
                 {item.label}
               </span>

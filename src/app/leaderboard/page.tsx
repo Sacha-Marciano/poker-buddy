@@ -41,7 +41,7 @@ export default function LeaderboardPage() {
       <main className="p-4">
         {error && (
           <div className="mb-4">
-            <p className="text-red-600">Failed to load leaderboard: {error}</p>
+            <p className="text-[#c0392b]">Failed to load leaderboard: {error}</p>
           </div>
         )}
 
@@ -58,7 +58,7 @@ export default function LeaderboardPage() {
               <Card key={entry.playerId} variant="outlined">
                 <div className="flex items-center gap-4">
                   {/* Rank */}
-                  <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center">
+                  <div className="shrink-0 w-12 h-12 flex items-center justify-center">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg text-white"
                       style={{ backgroundColor: entry.avatarColor || '#6B7280' }}
@@ -69,10 +69,10 @@ export default function LeaderboardPage() {
 
                   {/* Player Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-white truncate">
+                    <h3 className="font-semibold text-[#e8e0d4] truncate">
                       {entry.playerName}
                     </h3>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="text-sm text-[#9a9088]">
                       {entry.totalGamesPlayed} games • Avg:{' '}
                       {entry.averageProfitPerSession !== null
                         ? formatProfitLoss(entry.averageProfitPerSession)
@@ -89,7 +89,7 @@ export default function LeaderboardPage() {
                     >
                       {formatProfitLoss(entry.totalProfitLoss)}
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-[#9a9088]">
                       {formatCurrency(entry.totalBuyIns)} played
                     </p>
                   </div>

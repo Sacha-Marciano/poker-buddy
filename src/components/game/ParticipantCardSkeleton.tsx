@@ -14,7 +14,7 @@ export function ParticipantCardSkeleton() {
         </div>
 
         {/* Buy-In Controls */}
-        <div className="pt-4 border-t border-zinc-200 dark:border-zinc-700 space-y-3">
+        <div className="pt-4 border-t border-[#3a3530] space-y-3">
           {/* Quick Buy-In Buttons */}
           <div className="grid grid-cols-5 gap-2">
             {[1, 2, 3, 4, 5].map((i) => (

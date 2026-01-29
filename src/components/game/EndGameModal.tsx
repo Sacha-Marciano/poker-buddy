@@ -183,21 +183,21 @@ export function EndGameModal({
       }
     >
       {error && (
-        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+        <div className="mb-4 p-3 bg-[#c0392b]/10 border border-[#c0392b]/20 rounded-lg">
+          <p className="text-[#c0392b] text-sm">{error}</p>
         </div>
       )}
 
       <div className="space-y-6">
         {/* Cashout Inputs */}
         <div>
-          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
+          <h3 className="font-semibold text-[#e8e0d4] mb-3">
             Enter Final Chip Counts
           </h3>
           <div className="space-y-3">
             {participants.map((participant) => (
               <div key={participant._id}>
-                <label className="block text-sm font-medium text-white mb-1">
+                <label className="block text-sm font-medium text-[#e8e0d4] mb-1">
                   {participant.playerName}
                 </label>
                 <div className="flex items-center gap-2">
@@ -210,7 +210,7 @@ export function EndGameModal({
                       min="0"
                     />
                   </div>
-                  <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                  <span className="text-sm text-[#9a9088]">
                     Bought: {formatCurrency(participant.totalBuyIns)}
                   </span>
                 </div>
@@ -223,21 +223,21 @@ export function EndGameModal({
         <Card variant="outlined">
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-zinc-600 dark:text-zinc-400">Total Buy-ins</span>
+              <span className="text-[#9a9088]">Total Buy-ins</span>
               <span className="font-semibold">{formatCurrency(totalBuyIns)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-zinc-600 dark:text-zinc-400">Total Cashouts</span>
+              <span className="text-[#9a9088]">Total Cashouts</span>
               <span className="font-semibold">{formatCurrency(totalCashout)}</span>
             </div>
-            <div className="h-px bg-zinc-200 dark:bg-zinc-700" />
+            <div className="h-px bg-[#3a3530]" />
             <div className="flex justify-between">
               <span className="font-semibold">Difference</span>
               <span
                 className={`font-semibold ${
                   difference === 0
-                    ? 'text-green-600'
-                    : 'text-red-600'
+                    ? 'text-[#27ae60]'
+                    : 'text-[#c0392b]'
                 }`}
               >
                 {difference >= 0 ? '+' : ''}{formatCurrency(difference)}
@@ -249,31 +249,31 @@ export function EndGameModal({
         {/* Settlements */}
         {settlements.length > 0 && (
           <div>
-            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
+            <h3 className="font-semibold text-[#e8e0d4] mb-3">
               Settlements
             </h3>
             <div className="space-y-2">
               {settlements.map((settlement, idx) => (
-                <Card key={idx} variant="outlined" className="bg-blue-50 dark:bg-blue-900/10">
+                <Card key={idx} variant="outlined" className="bg-[#2d6b3f]/10">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-[#e8e0d4]">
                         {settlement.fromPlayerName}
                       </p>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                      <p className="text-xs text-[#9a9088]">
                         pays
                       </p>
                     </div>
                     <div className="px-4">
-                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                      <p className="text-lg font-bold text-[#d4a03c]">
                         {formatCurrency(settlement.amount)}
                       </p>
                     </div>
                     <div className="flex-1 text-right">
-                      <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                      <p className="text-xs text-[#9a9088]">
                         to
                       </p>
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-[#e8e0d4]">
                         {settlement.toPlayerName}
                       </p>
                     </div>

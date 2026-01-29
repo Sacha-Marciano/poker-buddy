@@ -93,7 +93,7 @@ export default function CreateGamePage() {
               />
 
               {error && (
-                <p className="text-red-600 text-sm">{error}</p>
+                <p className="text-[#c0392b] text-sm">{error}</p>
               )}
 
               <div className="flex gap-3 pt-4">

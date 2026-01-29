@@ -19,27 +19,27 @@ export function GameCard({ game }: GameCardProps) {
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+            <h3 className="font-semibold text-[#e8e0d4] truncate">
               {game.location || 'Game Session'}
             </h3>
             <Badge variant={isActive ? 'success' : 'default'} size="sm">
               {isActive ? 'Active' : 'Completed'}
             </Badge>
           </div>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-[#9a9088]">
             {format(new Date(game.startTime), 'MMM d, yyyy • h:mm a')}
           </p>
           <div className="flex items-center gap-4 mt-2 text-sm">
-            <span className="text-zinc-600 dark:text-zinc-400">
+            <span className="text-[#9a9088]">
               {game.participantCount} player{game.participantCount !== 1 ? 's' : ''}
             </span>
-            <span className="text-zinc-600 dark:text-zinc-400">
+            <span className="text-[#9a9088]">
               {formatCurrency(game.totalBuyIns)} in play
             </span>
           </div>
         </div>
         <svg
-          className="w-5 h-5 text-zinc-400 flex-shrink-0"
+          className="w-5 h-5 text-[#9a9088] shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
