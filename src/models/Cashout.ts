@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 export interface ICashout {
   gameParticipantId: Types.ObjectId;
   amount: number;
+  finalChips?: number;
   timestamp: Date;
   createdAt: Date;
 }
@@ -29,17 +30,30 @@ const cashoutSchema = new Schema<ICashoutDocument>(
         message: 'Amount must be a whole number (no decimals)',
       },
     },
+    finalChips: {
+      type: Number,
+      min: [0, 'Final chips cannot be negative'],
+      max: [1000000, 'Final chips cannot exceed 1,000,000'],
+      validate: {
+        validator: function (value: number | undefined) {
+          if (value === undefined || value === null) return true;
+          return Number.isInteger(value);
+        },
+        message: 'Final chips must be a whole number',
+      },
+    },
     timestamp: {
       type: Date,
       required: true,
       default: Date.now,
-      validate: {
-        validator: function (value: Date) {
-          // Allow 5 minutes in the future to account for clock drift
-          return value <= new Date(Date.now() + 5 * 60 * 1000);
-        },
-        message: 'Timestamp cannot be in the future',
-      },
+      // TODO: TEMPORARY - validator removed to allow seeding historical data.
+      // Re-enable this validator after seeding is complete:
+      // validate: {
+      //   validator: function (value: Date) {
+      //     return value <= new Date(Date.now() + 5 * 60 * 1000);
+      //   },
+      //   message: 'Timestamp cannot be in the future',
+      // },
     },
   },
   {

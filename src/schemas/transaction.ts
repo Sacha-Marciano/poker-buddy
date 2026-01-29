@@ -24,6 +24,7 @@ const cashoutAmountSchema = z
 export const createBuyInSchema = z.object({
   gameParticipantId: z.string().min(1, 'Game participant ID is required'),
   amount: amountSchema,
+  isRebuy: z.boolean().optional().default(false),
   timestamp: z.string().datetime().optional(),
 });
 
@@ -40,6 +41,12 @@ export const updateBuyInSchema = z.object({
 const cashoutItemSchema = z.object({
   gameParticipantId: z.string().min(1, 'Game participant ID is required'),
   amount: cashoutAmountSchema,
+  finalChips: z
+    .number()
+    .int('Final chips must be a whole number')
+    .min(0, 'Final chips cannot be negative')
+    .max(1000000, 'Final chips cannot exceed 1,000,000')
+    .optional(),
 });
 
 /**

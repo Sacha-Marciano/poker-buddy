@@ -91,7 +91,12 @@ export function ParticipantCard({
       <div className="space-y-4">
         {/* Player Info */}
         <div className="flex justify-between items-start">
-          <div className="flex-1">
+          <div className="flex items-center gap-3 flex-1">
+            <div
+              className="w-10 h-10 rounded-full flex-shrink-0"
+              style={{ backgroundColor: participant.avatarColor || '#6B7280' }}
+            />
+            <div className="flex-1">
             <h3 className="text-xl font-bold text-white">
               {participant.playerName}
             </h3>
@@ -108,6 +113,7 @@ export function ParticipantCard({
                   Saving...
                 </span>
               )}
+            </div>
             </div>
           </div>
           <div className="text-right">

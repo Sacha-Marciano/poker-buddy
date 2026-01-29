@@ -11,6 +11,8 @@ import { z } from 'zod';
 
 const updatePlayerSchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name too long').trim(),
+  phone: z.string().max(20).trim().optional().or(z.literal('')),
+  avatarColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().or(z.literal('')),
 });
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -98,6 +100,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
     return successResponse({
       _id: player._id,
       name: player.name,
+      phone: player.phone,
+      avatarColor: player.avatarColor,
       totalGamesPlayed,
       totalBuyIns,
       totalCashouts,
@@ -131,7 +135,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     await connectDB();
 
     const body = await request.json();
-    const { name } = updatePlayerSchema.parse(body);
+    const { name, phone, avatarColor } = updatePlayerSchema.parse(body);
 
     const player = await Player.findById(id);
     if (!player || player.isDeleted) {
@@ -149,6 +153,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     }
 
     player.name = name;
+    if (phone !== undefined) player.phone = phone || undefined;
+    if (avatarColor !== undefined) player.avatarColor = avatarColor || undefined;
     await player.save();
 
     return successResponse({

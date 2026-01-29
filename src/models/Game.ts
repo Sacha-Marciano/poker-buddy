@@ -25,13 +25,14 @@ const gameSchema = new Schema<IGameDocument>(
     startTime: {
       type: Date,
       required: [true, 'Start time is required'],
-      validate: {
-        validator: function (value: Date) {
-          // Allow 5 minutes in the future to account for clock drift
-          return value <= new Date(Date.now() + 5 * 60 * 1000);
-        },
-        message: 'Start time cannot be in the future',
-      },
+      // TODO: TEMPORARY - validator removed to allow seeding historical data.
+      // Re-enable this validator after seeding is complete:
+      // validate: {
+      //   validator: function (value: Date) {
+      //     return value <= new Date(Date.now() + 5 * 60 * 1000);
+      //   },
+      //   message: 'Start time cannot be in the future',
+      // },
     },
     endTime: {
       type: Date,

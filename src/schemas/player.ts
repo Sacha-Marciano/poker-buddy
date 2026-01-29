@@ -9,6 +9,17 @@ export const createPlayerSchema = z.object({
     .min(1, 'Name is required')
     .max(50, 'Name cannot exceed 50 characters')
     .trim(),
+  phone: z
+    .string()
+    .max(20, 'Phone number cannot exceed 20 characters')
+    .trim()
+    .optional()
+    .or(z.literal('')),
+  avatarColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color (e.g., #FF6B6B)')
+    .optional()
+    .or(z.literal('')),
 });
 
 /**
@@ -20,6 +31,17 @@ export const updatePlayerSchema = z.object({
     .min(1, 'Name is required')
     .max(50, 'Name cannot exceed 50 characters')
     .trim(),
+  phone: z
+    .string()
+    .max(20, 'Phone number cannot exceed 20 characters')
+    .trim()
+    .optional()
+    .or(z.literal('')),
+  avatarColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color (e.g., #FF6B6B)')
+    .optional()
+    .or(z.literal('')),
 });
 
 /**

@@ -37,6 +37,7 @@ export async function GET() {
         $project: {
           playerId: '$_id',
           playerName: '$name',
+          avatarColor: 1,
           totalGamesPlayed: { $size: '$participations' },
           totalBuyIns: { $sum: '$buyIns.amount' },
           totalCashouts: { $sum: '$cashouts.amount' },

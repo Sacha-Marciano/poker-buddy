@@ -278,7 +278,7 @@ export default function GameDetailPage({ params }: { params: Promise<{ id: strin
                       {formatCurrency(tx.amount)}
                     </span>
                     <Badge variant={tx.type === 'BUY_IN' ? 'danger' : 'success'} size="sm">
-                      {tx.type === 'BUY_IN' ? 'Buy-in' : 'Cashout'}
+                      {tx.type === 'BUY_IN' ? (tx.isRebuy ? 'Rebuy' : 'Buy-in') : 'Cashout'}
                     </Badge>
                   </div>
                 </div>

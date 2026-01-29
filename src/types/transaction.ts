@@ -5,6 +5,7 @@ export interface BuyIn {
   _id: string;
   gameParticipantId: string;
   amount: number;
+  isRebuy: boolean;
   timestamp: string;
   createdAt: string;
 }
@@ -16,6 +17,7 @@ export interface Cashout {
   _id: string;
   gameParticipantId: string;
   amount: number;
+  finalChips?: number;
   timestamp: string;
   createdAt: string;
 }
@@ -35,4 +37,5 @@ export interface BuyInUpdated {
 export interface CashoutInput {
   gameParticipantId: string;
   amount: number;
+  finalChips?: number;
 }

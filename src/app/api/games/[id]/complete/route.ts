@@ -16,6 +16,7 @@ const cashoutItemSchema = z.object({
     .int('Amount must be a whole number')
     .min(0, 'Amount cannot be negative')
     .max(1000000, 'Amount cannot exceed 1,000,000'),
+  finalChips: z.number().int().min(0).max(1000000).optional(),
 });
 
 const completeGameSchema = z.object({
@@ -150,6 +151,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       data.cashouts.map((c) => ({
         gameParticipantId: c.gameParticipantId,
         amount: c.amount,
+        finalChips: c.finalChips,
         timestamp: now,
       }))
     );

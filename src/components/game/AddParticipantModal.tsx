@@ -163,13 +163,21 @@ export function AddParticipantModal({
                     disabled={isSubmitting}
                     className="w-full text-left p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <p className="font-medium text-white">
-                      {player.name}
-                    </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {player.totalGamesPlayed} game
-                      {player.totalGamesPlayed !== 1 ? 's' : ''}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-8 h-8 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: player.avatarColor || '#6B7280' }}
+                      />
+                      <div>
+                        <p className="font-medium text-white">
+                          {player.name}
+                        </p>
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                          {player.totalGamesPlayed} game
+                          {player.totalGamesPlayed !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>

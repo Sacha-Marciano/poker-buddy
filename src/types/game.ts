@@ -36,6 +36,7 @@ export interface GameParticipant {
   _id: string;
   playerId: string;
   playerName: string;
+  avatarColor?: string;
   joinedAt: string;
   buyInCount: number;
   totalBuyIns: number;
@@ -52,6 +53,7 @@ export interface GameTransaction {
   playerId: string;
   playerName: string;
   amount: number;
+  isRebuy?: boolean;
   timestamp: string;
   type: 'BUY_IN' | 'CASHOUT';
 }

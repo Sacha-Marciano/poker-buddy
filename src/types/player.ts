@@ -4,6 +4,8 @@
 export interface Player {
   _id: string;
   name: string;
+  phone?: string;
+  avatarColor?: string;
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
@@ -15,6 +17,8 @@ export interface Player {
 export interface PlayerWithStats {
   _id: string;
   name: string;
+  phone?: string;
+  avatarColor?: string;
   totalGamesPlayed: number;
   totalBuyIns: number;
   totalCashouts: number;
@@ -39,6 +43,8 @@ export interface PlayerGameRecord {
 export interface PlayerDetail {
   _id: string;
   name: string;
+  phone?: string;
+  avatarColor?: string;
   totalGamesPlayed: number;
   totalBuyIns: number;
   totalCashouts: number;
@@ -55,6 +61,7 @@ export interface PlayerDetail {
 export interface LeaderboardEntry {
   playerId: string;
   playerName: string;
+  avatarColor?: string;
   totalGamesPlayed: number;
   totalBuyIns: number;
   totalCashouts: number;

@@ -45,6 +45,8 @@ export type ApiResult<T> =
  */
 export interface CreatePlayerRequest {
   name: string;
+  phone?: string;
+  avatarColor?: string;
 }
 
 /**
@@ -52,6 +54,8 @@ export interface CreatePlayerRequest {
  */
 export interface UpdatePlayerRequest {
   name: string;
+  phone?: string;
+  avatarColor?: string;
 }
 
 /**
@@ -76,6 +80,7 @@ export interface AddParticipantRequest {
 export interface CreateBuyInRequest {
   gameParticipantId: string;
   amount: number;
+  isRebuy?: boolean;
   timestamp?: string;
 }
 
@@ -94,6 +99,7 @@ export interface CreateCashoutsRequest {
   cashouts: Array<{
     gameParticipantId: string;
     amount: number;
+    finalChips?: number;
   }>;
 }
 
@@ -104,6 +110,7 @@ export interface CompleteGameRequest {
   cashouts: Array<{
     gameParticipantId: string;
     amount: number;
+    finalChips?: number;
   }>;
   discrepancyNotes?: string;
 }

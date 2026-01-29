@@ -59,23 +59,12 @@ export default function LeaderboardPage() {
                 <div className="flex items-center gap-4">
                   {/* Rank */}
                   <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center">
-                    {index < 3 ? (
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                          index === 0
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : index === 1
-                            ? 'bg-gray-100 text-gray-700'
-                            : 'bg-orange-100 text-orange-700'
-                        }`}
-                      >
-                        {index + 1}
-                      </div>
-                    ) : (
-                      <span className="text-lg font-semibold text-zinc-500">
-                        {index + 1}
-                      </span>
-                    )}
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg text-white"
+                      style={{ backgroundColor: entry.avatarColor || '#6B7280' }}
+                    >
+                      {index + 1}
+                    </div>
                   </div>
 
                   {/* Player Info */}

@@ -6,6 +6,8 @@ import { z } from 'zod';
 
 const createPlayerSchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name too long').trim(),
+  phone: z.string().max(20).trim().optional().or(z.literal('')),
+  avatarColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().or(z.literal('')),
 });
 
 // GET /api/players - Get all active players with stats
@@ -43,6 +45,8 @@ export async function GET() {
         $project: {
           _id: 1,
           name: 1,
+          phone: 1,
+          avatarColor: 1,
           totalGamesPlayed: { $size: '$participations' },
           totalBuyIns: { $sum: '$buyIns.amount' },
           totalCashouts: { $sum: '$cashouts.amount' },
@@ -66,7 +70,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { name } = createPlayerSchema.parse(body);
+    const { name, phone, avatarColor } = createPlayerSchema.parse(body);
 
     // Check if name already exists (case-insensitive)
     const existing = await Player.findOne({
@@ -77,7 +81,11 @@ export async function POST(request: NextRequest) {
       return errorResponse('Player name already exists', 400);
     }
 
-    const player = await Player.create({ name });
+    const player = await Player.create({
+      name,
+      ...(phone && { phone }),
+      ...(avatarColor && { avatarColor }),
+    });
 
     return successResponse(player, 201);
   } catch (error) {

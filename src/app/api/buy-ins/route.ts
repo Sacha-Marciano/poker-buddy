@@ -16,6 +16,7 @@ const createBuyInSchema = z.object({
     .int('Amount must be a whole number')
     .min(1, 'Amount must be at least 1')
     .max(1000000, 'Amount cannot exceed 1,000,000'),
+  isRebuy: z.boolean().optional().default(false),
   timestamp: z.string().datetime().optional(),
 });
 
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
     const buyIn = await BuyIn.create({
       gameParticipantId: data.gameParticipantId,
       amount: data.amount,
+      isRebuy: data.isRebuy,
       timestamp,
     });
 
